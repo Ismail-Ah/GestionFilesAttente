@@ -1,10 +1,13 @@
 <template>
   <ReusableList
     title="Services"
-    fetchUrl="/services"
+    fetchUrl='/services'
     :headers="['Nom', 'Agence', 'Agent', 'Date de création']"
     :fields="['nom', 'agence.nom', 'agent.nom']"
     cardClass="card card-success"
+    :role = "role"
+    :user_id = "user_id"
+    :data1="services"
   />
 </template>
 
@@ -16,5 +19,16 @@ export default {
   components: {
     ReusableList,
   },
+  data(){
+    return {
+      
+    }
+  },
+  props: {
+    role: String,
+    user_id:Number,
+    services:Object,
+    
+  }
 };
 </script>

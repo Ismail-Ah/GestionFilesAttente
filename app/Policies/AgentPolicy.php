@@ -53,7 +53,7 @@ class AgentPolicy
      */
     public function restore(User $user, User $model): bool
     {
-        return $user->role === 'ADMIN' || $user->role==='ADMINISTRATION' || $user->id===$model->id;
+        return $user->role === 'ADMIN' || $user->role==='ADMINISTRATION' ;
 
     }
 
@@ -62,6 +62,6 @@ class AgentPolicy
      */
     public function forceDelete(User $user, User $model): bool
     {
-        return $user->role === 'ADMIN' || $user->role==='ADMINISTRATION' || $user->id===$model->id;
+        return $user->role === 'ADMIN' || $user->role==='ADMINISTRATION' ;
     }
 }

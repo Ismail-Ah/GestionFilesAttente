@@ -29,6 +29,11 @@
                   </td>
                   <td class="project-actions text-right">
                     <div class="btn-group filter-btn-group">
+                      <a class="btn btn-success btn-sm mr-2" @click="title==='Services'?view(item.agence.id,item.id):view(item.id)">
+                        <i class="fas fa-eye"></i>
+                      </a>
+                    </div>
+                    <div class="btn-group filter-btn-group">
                       <a class="btn btn-info btn-sm mr-2" @click="toggleOptions(item.id)">
                         <i class="fas fa-edit"></i>
                       </a>
@@ -37,6 +42,8 @@
                         <a @click.prevent="deleteItem(item.id, item.nom)" href="#" class="dropdown-item" style="color:red;">Supprimer</a>
                       </div>
                     </div>
+                    
+
                   </td>
                 </tr>
               </tbody>
@@ -51,6 +58,7 @@
     </div>
   </template>
   
+
   <script>
   import axios from 'axios';
   
@@ -76,7 +84,10 @@
       cardClass: {
         type: String,
         default: 'card card-primary'
-      }
+      },
+      role:String,
+      user_id:Number,
+      data1:Object
     },
     data() {
       return {
@@ -94,14 +105,53 @@
       toggleShowList() {
         this.ShowList = !this.ShowList;
       },
+      view(id,id2=0) {
+    let url;
+    let param = {};
+    
+    if (this.title === 'Agents') {
+      url = 'profile';
+      param = {role:'AGENT', profile_id: id };
+    } else if (this.title === 'Services') {
+      url = 'dashboard';
+      param = {agence_id: id ,service_id:id2};
+    } else {
+      url = 'dashboard';
+      param = {agence_id: id };
+    }
+        
+    // Force navigation even if the route is the same
+    this.$router.push({ name: url, params: param }).catch(err => {
+      console.error('Navigation error:', err);
+    });
+
+    // Optionally, force reloading of the component
+    if (url === 'profile') {
+      this.$router.replace({ name: url, params: param });
+    }
+  },
       async getItems(page = 1) {
-        try {
-          const response = await axios.get(`${this.fetchUrl}?page=${page}`);
+        if (this.data1!={}){
+          this.items.data=this.data1;
+        }
+        else {
+          try {
+          let response;
+          if (this.role==='AGENT' && this.title==='Services'){
+            console.log('user_id = ',this.user_id)
+            response = await axios.get(`${this.fetchUrl}/${this.user_id}?page=${page}`);
+          }
+          else {
+            response = await axios.get(`${this.fetchUrl}?page=${page}`);
+
+          }
           this.items = response.data;
           this.initializeShowOptions();
         } catch (error) {
           console.error('Erreur lors de la récupération des éléments:', error);
         }
+        }
+        
       },
       initializeShowOptions() {
         this.showOptions = this.items.data.reduce((options, item) => {
@@ -153,6 +203,9 @@
     beforeDestroy() {
       clearInterval(this.interval);
     },
+    watch:{
+      user_id:'getItems'
+    }
   };
   </script>
   

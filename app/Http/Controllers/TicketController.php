@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Models\Agence;
 use App\Models\Ticket;
 use App\Models\Service;
@@ -68,7 +69,7 @@ class TicketController extends Controller
             return response()->json("Accés refusé", 403);
         }
 
-        $tickets = $this->getLatestTickets($service->fileAttente()->latest()->first(), 3);
+        $tickets = $this->getLatestTickets($service->fileAttente()->latest()->first(), 5);
 
         return response()->json($this->addServiceAndAgenceNames($tickets));
     }
@@ -89,19 +90,38 @@ class TicketController extends Controller
 
     public function getAgenceTickets(Agence $agence)
     {
+        // Check if the user is an agent and belongs to the correct agency
         if (auth()->user()->role === 'AGENT' && auth()->user()->agence->id != $agence->id) {
             return response()->json("Accés refusé", 403);
         }
-
-        $tickets = collect();
-        foreach ($agence->services as $service) {
-            $tickets = $tickets->merge($this->getLatestTickets($service->fileAttente()->latest()->first()));
-        }
-
-        $paginatedTickets = $this->paginateCollection($tickets, 3);
-
+    
+        // Fetch all tickets related to the agency's services
+        $tickets = Ticket::whereHas('fileAttente.service', function ($query) use ($agence) {
+            $query->where('agence_id', $agence->id);
+        })->latest()->get();
+    
+        // Paginate the tickets collection
+        $paginatedTickets = $this->paginateCollection($tickets, 5);
+    
+        // Add service and agency names to the tickets
         return response()->json($this->addServiceAndAgenceNames($paginatedTickets));
     }
+
+    public function getAgentTickets(User $user)
+    {
+
+        $tickets = Ticket::whereHas('fileAttente.service', function ($query) use ($user) {
+            $query->where('user_id', $user->id);
+        })->latest()->get();
+    
+        // Paginate the tickets collection
+        $paginatedTickets = $this->paginateCollection($tickets, 5);
+    
+        // Add service and agency names to the tickets
+        return response()->json($this->addServiceAndAgenceNames($paginatedTickets));
+    }
+    
+
 
     private function getLatestTickets($fileAttente, $perPage = null)
     {

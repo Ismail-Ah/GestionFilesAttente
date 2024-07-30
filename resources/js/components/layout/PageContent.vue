@@ -2,11 +2,18 @@
   <div :class="['hold-transition', 'sidebar-mini', 'layout-fixed', { 'sidebar-collapse': isSidebarCollapsed }]">
     <div class="wrapper">
       <AppLayout />
-      <Navbar @toggle-sidebar="toggleSidebar" />
+      <Navbar @toggle-sidebar="toggleSidebar" @search-results="handleSearchResults"/>
       <Sidebar :role="role" :isCollapsed="isSidebarCollapsed" />
       <div class="content-wrapper">
         <section class="content">
-          <slot></slot>
+          <!-- Conditional rendering based on the presence of search results -->
+          <template v-if="isSearching">
+            <SearchResult :results="searchData" />
+          </template>
+          <template v-else>
+            <!-- Render default content or slot content -->
+            <slot ></slot>
+          </template>
         </section>
       </div>
     </div>
@@ -17,6 +24,7 @@
 import AppLayout from './AppLayout.vue';
 import Footer from './Footer.vue';
 import Navbar from './Navbar.vue';
+import SearchResult from './SearchResult.vue';
 import Sidebar from './Sidebar.vue';
 
 export default {
@@ -24,22 +32,32 @@ export default {
     Navbar,
     Footer,
     Sidebar,
-    AppLayout
+    AppLayout,
+    SearchResult
   },
   name: 'PageContent',
   props: {
-    role: String,
+    role: {
+      type: String,
+      required: true
+    }
   },
   data() {
     return {
       isSidebarCollapsed: false,
+      isSearching: false,
+      searchData: { agents: [], services: [], agences: [] },
     };
   },
   methods: {
     toggleSidebar() {
       this.isSidebarCollapsed = !this.isSidebarCollapsed;
     },
-  },
+    handleSearchResults(data) {
+      this.isSearching = true;
+      this.searchData = data;
+    }
+  }
 };
 </script>
 

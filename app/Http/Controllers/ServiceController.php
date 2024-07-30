@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Models\Agence;
 use App\Models\Service;
-use App\Models\Files_Attente;
 use Illuminate\Http\Request;
+use App\Models\Files_Attente;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Validator;
 
@@ -138,5 +139,9 @@ class ServiceController extends Controller
     public function showFormEditerService()
     {
         return view('editer-service', ["role" => auth()->user()->role]);
+    }
+
+    public function getServicesOfAgent(User $user){
+        return response()->json($user->services()->with('agence','agent')->paginate(4));
     }
 }

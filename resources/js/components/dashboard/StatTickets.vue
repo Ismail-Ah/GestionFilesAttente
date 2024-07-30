@@ -83,6 +83,8 @@ export default {
       ? `/${parseInt(this.name_id)}/tickets?page=${page}`
       : this.name === "agence"
       ? `/agences/${parseInt(this.name_id)}/tickets?page=${page}`
+      : this.name === "agent"
+      ? `/agent/${parseInt(this.name_id)}/tickets?page=${page}`
       : `/tickets?page=${page}`;
     response = await axios.get(url);
     this.tickets = response.data;

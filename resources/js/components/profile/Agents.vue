@@ -5,6 +5,7 @@
     :headers="['Nom', 'Email', 'Agence']"
     :fields="['nom', 'agence.nom']"
     cardClass="card card-warning"
+    :data1="agents"
   />
 </template>
 
@@ -16,5 +17,8 @@ export default {
   components: {
     ReusableList,
   },
+  props:{
+    agents:Object,
+  }
 };
 </script>

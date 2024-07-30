@@ -29,11 +29,18 @@ const routesTicketDispenser = [
 ];
 
 const routesHome=[
-    { path: '/dashboard', component: Dashboard,props: route => ({ role: route.params.role })},
+    { path: '/dashboard',name:'dashboard', component: Dashboard,props: route => ({ role: route.params.role,agence_id:route.params.agence_id||0,service_id:route.params.service_id||0 })},
     { path: '/statistiques', component: Statistiques,props: route => ({ role: route.params.role })},
-    { path: '/profile', component: Profile,props: route => ({ role: route.params.role })},
-
-]
+    {
+        path: '/profile',
+        name: 'profile',
+        component: Profile,
+        props: route => ({
+          role: route.params.role,
+          profile_id: route.params.profile_id || 0 
+        })
+      },
+    ]
 
 const routesAdmin = [
     { path: '/ajouter-agence', component: ajouterAgence,props: route => ({ role: route.params.role }) },

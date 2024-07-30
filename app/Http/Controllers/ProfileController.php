@@ -14,6 +14,9 @@ class ProfileController extends Controller
     }
     public function user(){
         $user=auth()->user();
-        return response()->json(["nom"=>$user->nom,"email"=>$user->email,"role"=>$user->role]);
+        return response()->json($user);
+    }
+    public function user2(User $user){
+        return response()->json($user);
     }
 }

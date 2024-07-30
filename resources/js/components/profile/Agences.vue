@@ -4,6 +4,7 @@
     fetchUrl="/agences"
     :headers="['Nom', 'Adresse', 'Email', 'Téléphone', 'Date de création']"
     :fields="['nom', 'adress', 'email', 'telephone']"
+    :data1="agences"
   />
 </template>
 
@@ -15,5 +16,8 @@ export default {
   components: {
     ReusableList,
   },
+  props:{
+    agences:Object,
+  }
 };
 </script>

@@ -105,18 +105,12 @@
   
                   </div>
                 </div>
-                  
-                  
-                
-                
             </div>
-           
-
           </div>
-          <Agences v-if="role=='ADMIN' || role==='ADMINISTRATION'" @deletItem="ItemDeleted"></Agences>
-          <Services v-if="role=='ADMIN' || role==='ADMINISTRATION' || role==='AGENT'" @deletItem="ItemDeleted"></Services>
-          <Agents v-if="role=='ADMIN' || role==='ADMINISTRATION'" @deletItem="ItemDeleted"></Agents>
-          <StatTickets v-if="role==='AGENT'"></StatTickets>
+          <Agences v-if="role==='ADMIN' || role==='ADMINISTRATION'" @deletItem="ItemDeleted"></Agences>
+          <Services v-if="role==='ADMIN' || role==='ADMINISTRATION' || role==='AGENT'" @deletItem="ItemDeleted" :role="role" :user_id="user.id" ></Services>
+          <Agents v-if="role==='ADMIN' || role==='ADMINISTRATION'" @deletItem="ItemDeleted"></Agents>
+          <StatTickets v-if="role==='AGENT'" name='agent' :name_id="user.id"></StatTickets>
         </div>
       </PageContent>
     </div>
@@ -144,10 +138,11 @@
             showEditAgence:false,
             showEditAgent:false,
             showEditService:false,
+            role:String,
         }
     },
     props:{
-      role:String
+      profile_id:[String,Number]
     },
     methods: {
       editProfile() {
@@ -157,13 +152,20 @@
         this.getInfos();
       },
       getUserInfo(){
-        axios.get('/profile/user')
+        let url ='/profile/user';
+        if (this.profile_id!=0){
+          url = `/profile/${parseInt(this.profile_id)}`;
+        }
+        console.log("profile_id = ",this.profile_id);
+        axios.get(url)
         .then(response => {
           this.user = response.data;
+          this.role=this.user.role;
         })
         .catch(error => {
           console.error('Error fetching agencies:', error);
         });  
+        console.log('role = ',this.user);
       },
       edit(item){
         if(item==='profile'){
@@ -213,14 +215,23 @@
 
     
   },
-  
+  watch:{
+    profile_id:'getUserInfo',
+    role:'',
+
+  },
   created() {
     this.getUserInfo();
     this.getInfos();
   },
 }
   </script>
-  
+ 
+ 
+
+
+
+ 
   <style scoped>
   .edit-icon {
     position: absolute;
