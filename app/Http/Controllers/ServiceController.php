@@ -59,8 +59,9 @@ class ServiceController extends Controller
     {
         return response()->json([
             'service' => $service,
-            'numéroTicket' => $service->ticket->numéro,
-            'nomAgence' => $service->agence_of_service->nom,
+            'numéroTicket' => $service->ticket()->numéro,
+            'nomAgence' => $service->agence->nom,
+            'agence_id' => $service->agence->id,
         ]);
     }
 

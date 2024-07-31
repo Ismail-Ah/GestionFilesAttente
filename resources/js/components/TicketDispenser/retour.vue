@@ -1,5 +1,5 @@
 <template>
-  <button class="btn-solid-lgg" @click="retour">
+  <button class="btn-solid-lg page-scroll" @click="retour">
    {{ $t('Retour')}}
   </button>
 </template>
@@ -17,23 +17,34 @@
   </script>
   
   <style scoped>
-  .btn-solid-lgg {
-    position: left;
-    display: inline-block;
-    padding: 1.375rem 2.625rem;
-    border: 0.125rem solid #fff;
-    border-radius: 2rem;
-    background-color: transparent; /* Fond transparent par défaut */
-    color: #fff;
-    font: 700 0.875rem / 1 "Open Sans", sans-serif;
-    text-decoration: none;
-    transition: all 0.2s;
-    margin-top: 20px; /* Réduit l'espace en haut */
-  }
-  
-  .btn-solid-lgg:hover {
-    background-color: #4e3fdd;
-    color: #fff;
-  }
+.btn-solid-lg {
+  display: inline-block;
+  padding: 1.375rem 2.625rem;
+  border: 0.125rem solid #023047;
+  border-radius: 1rem;
+  background-color: #023047;
+  color: #fff;
+  font: 700 0.875rem / 1 "Open Sans", sans-serif;
+  text-decoration: none;
+  -webkit-box-shadow: 0px 0px 5px 1px rgba(2,48,71,1);
+  -moz-box-shadow: 0px 0px 5px 1px rgba(2,48,71,1);
+  box-shadow: 0px 0px 5px 1px rgba(2,48,71,1);
+
+  margin: 0.5rem;
+  margin-top: 40px;
+  text-align: center; /* Center text horizontally */
+  vertical-align: middle; /* Center text vertically */
+}
+
+.btn-solid-lg.page-scroll {
+  margin-bottom: 1.125rem;
+}
+
+.btn-solid-lg.page-scroll:hover {
+  background-color: #fff;
+  border-color: #023047;
+  color: #023047;
+}
+
   </style>
   

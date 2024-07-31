@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import HomePage from './components/TicketDispenser/home.vue';
-import LanguageSelection from './components/TicketDispenser/langueSelection.vue';
 import ServiceSelection from './components/TicketDispenser/ServicesSelection.vue';
 import serviceStatistique from './components/TicketDispenser/serviceStatistique.vue';
 import TicketPrint from './components/TicketDispenser/ticket.vue';
@@ -22,7 +21,6 @@ const routesTicketDispenser = [
     {path : '/ticket-dispenser',component:HomePage},
     {path : '/ticket-dispenser/agences',component:SelectAgence},
     { path: '/ticket-dispenser/agences/:id', component: HomeVisitor },
-    { path: '/agence/:id/ticket-dispenser/language', component: LanguageSelection },
     { path: '/agence/:id/ticket-dispenser/services', component: ServiceSelection },
     { path: '/agence/:agence_id/ticket-dispenser/services/:service_id',component: serviceStatistique},
     { path : '/agence/:agence_id/ticket-dispenser/services/:service_id/ticket',component: TicketPrint},

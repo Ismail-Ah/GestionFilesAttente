@@ -5,11 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Queue Management</title>
     <?php echo app('Illuminate\Foundation\Vite')(['resources/js/app.js', 'resources/sass/app.scss']); ?>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+
 </head>
 <body>
     <style>
         body{
-            background-image:url('/img/wave3.svg') ;
+            background-color: aliceblue;
             background-size: cover;
             background-repeat: no-repeat;
             background-position: center;

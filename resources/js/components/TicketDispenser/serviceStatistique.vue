@@ -1,11 +1,14 @@
 <template>
+    <div style="display: flex; flex-direction: column; align-items: center; margin-top: -5%; width: 100%;">
+
     <div class="service-statistique">
-      <h1>{{$t('StatistiquesService')}}</h1>
+      <h1 class="title">{{$t('StatistiquesService')}}</h1>
       <Statistiques name="service" :name_id="service_id"></Statistiques>
       
-      <button class="btn-solid-lg page-scroll"  @click="prendreTicket(false)">{{$t('Quiter')}}</button>
-      <BackButton></BackButton>
-      <button class="btn-solid-lg page-scroll" style="background-color: tomato;border-color: tomato;"  @click="prendreTicket(true)">{{$t('prendreTicket')}}</button>
+      <button class="btn-solid-lg page-scroll quiter"  @click="prendreTicket(false)">{{$t('Quiter')}}</button>
+      <BackButton class="back-button"></BackButton>
+      <button class="btn-solid-lg page-scroll" style="background-color: #FB8500;border-color: #FB8500;"  @click="prendreTicket(true)">{{$t('prendreTicket')}}</button>
+    </div>
     </div>
  
   </template>
@@ -54,15 +57,20 @@ import Statistiques from '../statistique.vue';
   .btn-solid-lg {
   display: inline-block;
   padding: 1.375rem 2.625rem;
-  border: 0.125rem solid #fff;
-  border-radius: 2rem;
-  background-color: #fff;
-  color:   #4e3fdd;
+  border: 0.125rem solid #023047;
+  border-radius: 1rem;
+  background-color: #023047;
+  color: #fff;
   font: 700 0.875rem / 1 "Open Sans", sans-serif;
   text-decoration: none;
-  transition: all 0.2s;
+  -webkit-box-shadow: 0px 0px 5px 1px rgba(2,48,71,1);
+  -moz-box-shadow: 0px 0px 5px 1px rgba(2,48,71,1);
+  box-shadow: 0px 0px 5px 1px rgba(2,48,71,1);
+
   margin: 0.5rem;
   margin-top: 40px;
+  text-align: center; /* Center text horizontally */
+  vertical-align: middle; /* Center text vertically */
 }
 
 .btn-solid-lg.page-scroll {
@@ -70,9 +78,32 @@ import Statistiques from '../statistique.vue';
 }
 
 .btn-solid-lg.page-scroll:hover {
-  background-color:#4e3fdd;
-  border-color: #fff;
-  color: #fff;
+  background-color: #fff;
+  border-color: #023047;
+  color: #023047;
+}
+
+.back-button {
+  position: absolute;
+  bottom: 10px; /* Adjust this value to position vertically */
+  left: 20px;   /* Adjust this value to position horizontally */
+}
+
+.quiter {
+  position: absolute;
+  bottom: 10px; /* Adjust this value to position vertically */
+  left: 180px;   /* Adjust this value to position horizontally */
+}
+
+.title {
+  font-family: 'Open Sans', sans-serif;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #023047;
+  text-align: center;
+  margin-bottom: 10px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+  padding: 20px;
 }
 
   </style>

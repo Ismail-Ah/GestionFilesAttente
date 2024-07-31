@@ -1,8 +1,9 @@
 {
+    "Bienvenue":"Bienvenue",
     "Retour": "Retour",
     "SelectService": "Sélectionner un service",
     "StatistiquesService": "Statistiques du service",
     "Quiter": "Quitter",
     "prendreTicket": "Prendre une ticket",
-    "Instructions": "Veuillez conserver ce ticket jusqu'à votre tour."
+    "Instructions": "Veuillez conserver ce ticket jusqu'à votre tour"
 }

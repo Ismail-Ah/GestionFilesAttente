@@ -1,8 +1,9 @@
 {
+     "Bienvenue": "مرحبا",
     "Retour": "عودة",
     "SelectService": "اختر الخدمة",
     "StatistiquesService": "إحصائيات الخدمة",
     "Quiter": "خروج",
     "prendreTicket": "احصل على تذكرة",
-    "Instructions": "يرجى الاحتفاظ بهذه التذكرة حتى يأتي دورك."
+    "Instructions": "يرجى الاحتفاظ بهذه التذكرة حتى يأتي دورك"
 }

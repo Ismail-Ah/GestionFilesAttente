@@ -18,4 +18,4 @@
 <?php if (isset($__componentOriginal4cfb90355b4d8db71d1d51150ad88a4f)): ?>
 <?php $component = $__componentOriginal4cfb90355b4d8db71d1d51150ad88a4f; ?>
 <?php unset($__componentOriginal4cfb90355b4d8db71d1d51150ad88a4f); ?>
-<?php endif; ?><?php /**PATH D:\Documents\stage\project\resources\views/TD/TD-agences.blade.php ENDPATH**/ ?>
+<?php endif; ?><?php /**PATH D:\Documents\stage\project\resources\views/TD/TD-statistiques.blade.php ENDPATH**/ ?>
