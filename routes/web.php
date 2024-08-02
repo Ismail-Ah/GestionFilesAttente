@@ -12,7 +12,7 @@ use App\Http\Controllers\TicketDispenserController;
 
 // Routes for agencies
 Route::post('/agencies', [AgenceController::class, 'store'])->middleware('can:create,App\Models\Agence');
-Route::get('/agencies', [AgenceController::class, 'agencies'])->middleware('can:viewAny,App\Models\Agence');
+Route::get('/agencies', [AgenceController::class, 'agencies']);
 Route::get('/agences', [AgenceController::class, 'getAgences'])->middleware('can:viewAny,App\Models\Agence');
 Route::get('/agences/{agence}', [AgenceController::class, 'getAgence'])->middleware('can:view,agence');
 Route::delete('/agences/{agence}', [AgenceController::class, 'deleteAgence'])->middleware('can:delete,agence');
@@ -27,9 +27,11 @@ Route::get('/edit-agent/services', [ServiceController::class, 'getServices2'])->
 Route::delete('/services/{service}', [ServiceController::class, 'deleteService'])->middleware('can:delete,service');
 Route::post('/services/{service}/update', [ServiceController::class, 'updateService'])->middleware('can:update,service');
 Route::get('/services/{user}', [ServiceController::class, 'getServicesOfAgent'])->middleware('can:viewAny,App\Models\Service');
+Route::get('/service/{service}/etat', [ServiceController::class, 'changeEtatService'])->middleware('can:update,service');
+
 
 // Routes for tickets
-Route::post('/agence/{agence}/ticket-dispenser/services/{service}/ticket', [TicketController::class, 'createTicket']);
+Route::post('/agence/{agence}/ticket-dispenser/services/{service}/ticket', [TicketController::class, 'createTicket'])->middleware('can:prendreTicket,service');
 Route::get('/{service}/tickets', [TicketController::class, 'getServiceTickets']);
 Route::put('/tickets/{ticket}/validate', [TicketController::class, 'validerTicket'])->middleware(['auth', 'can:delete,ticket']);
 Route::get('/tickets', [TicketController::class, 'getAllTickets'])->middleware(['auth', 'can:viewAny,App\Models\Ticket']);
@@ -72,8 +74,8 @@ Route::get('/ticket-dispenser/agences', [TicketDispenserController::class, 'show
 Route::get('/ticket-dispenser/agences/{agence}', [TicketDispenserController::class, 'showTDHome2']);
 Route::get('/agence/{agence}/ticket-dispenser/language', [TicketDispenserController::class, 'showTDLanguages']);
 Route::get('/agence/{agence}/ticket-dispenser/services', [TicketDispenserController::class, 'showTDServices']);
-Route::get('/agence/{agence}/ticket-dispenser/services/{service}', [TicketDispenserController::class, 'showTDStatistiques']);
-Route::get('/agence/{agence}/ticket-dispenser/services/{service}/ticket', [TicketDispenserController::class, 'showTDTicket']);
+Route::get('/agence/{agence}/ticket-dispenser/services/{service}', [TicketDispenserController::class, 'showTDStatistiques'])->middleware('can:prendreTicket,service');
+Route::get('/agence/{agence}/ticket-dispenser/services/{service}/ticket', [TicketDispenserController::class, 'showTDTicket'])->middleware('can:prendreTicket,service');
 
 // Routes for Home
 Route::get('/', function () { return view('home'); });
@@ -99,3 +101,8 @@ Route::get('/editer-agent', [AgentController::class, 'showFormEditerAgent'])->mi
 
 //search route
 Route::get('/live-search', [HomeController::class, 'liveSearch'])->name('liveSearch');
+
+//queue routes
+Route::get('/live-queue', [HomeController::class, 'liveQueue']);
+Route::get('/live-queue/agences/{agence}', [HomeController::class, 'homeQueue']);
+Route::get('/queue/agence/{agence}/services', [ServiceController::class, 'getServicesForQueue']);

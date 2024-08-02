@@ -8,7 +8,6 @@ use App\Models\Ticket;
 use App\Models\Service;
 use Illuminate\Http\Request;
 use App\Models\Files_Attente;
-use Illuminate\Support\Facades\Validator;
 
 class TicketController extends Controller
 {
@@ -69,7 +68,7 @@ class TicketController extends Controller
             return response()->json("Accés refusé", 403);
         }
 
-        $tickets = $this->getLatestTickets($service->fileAttente()->latest()->first(), 5);
+        $tickets = $this->getLatestTickets($service->fileAttente()->latest()->first());
 
         return response()->json($this->addServiceAndAgenceNames($tickets));
     }
@@ -80,9 +79,9 @@ class TicketController extends Controller
         if (auth()->user()->role === 'AGENT') {
             $tickets = Ticket::whereHas('fileAttente.service', function ($query) use ($userId) {
                 $query->where('user_id', $userId);
-            })->latest()->paginate(5);
+            })->get();
         } else {
-            $tickets = Ticket::latest()->paginate(5);
+            $tickets = Ticket::get();
         }
 
         return response()->json($this->addServiceAndAgenceNames($tickets));
@@ -98,56 +97,35 @@ class TicketController extends Controller
         // Fetch all tickets related to the agency's services
         $tickets = Ticket::whereHas('fileAttente.service', function ($query) use ($agence) {
             $query->where('agence_id', $agence->id);
-        })->latest()->get();
-    
-        // Paginate the tickets collection
-        $paginatedTickets = $this->paginateCollection($tickets, 5);
+        })->get();
     
         // Add service and agency names to the tickets
-        return response()->json($this->addServiceAndAgenceNames($paginatedTickets));
+        return response()->json($this->addServiceAndAgenceNames($tickets));
     }
 
     public function getAgentTickets(User $user)
     {
-
         $tickets = Ticket::whereHas('fileAttente.service', function ($query) use ($user) {
             $query->where('user_id', $user->id);
-        })->latest()->get();
-    
-        // Paginate the tickets collection
-        $paginatedTickets = $this->paginateCollection($tickets, 5);
+        })->get();
     
         // Add service and agency names to the tickets
-        return response()->json($this->addServiceAndAgenceNames($paginatedTickets));
+        return response()->json($this->addServiceAndAgenceNames($tickets));
     }
-    
 
-
-    private function getLatestTickets($fileAttente, $perPage = null)
+    private function getLatestTickets($fileAttente)
     {
-        return $fileAttente ? $fileAttente->tickets()->paginate($perPage) : collect()->paginate($perPage);
+        return $fileAttente ? $fileAttente->tickets()->get() : collect();
     }
 
     private function addServiceAndAgenceNames($tickets)
     {
         foreach ($tickets as $ticket) {
-            $ticket->nom_service = $ticket->service->nom;
+            $ticket->service = $ticket->service;
             $ticket->nom_agence = $ticket->service->agence->nom;
+            
         }
 
         return $tickets;
-    }
-
-    private function paginateCollection($collection, $perPage)
-    {
-        $currentPage = (int) request()->input('page', 1);
-
-        return new \Illuminate\Pagination\LengthAwarePaginator(
-            $collection->forPage($currentPage, $perPage),
-            $collection->count(),
-            $perPage,
-            $currentPage,
-            ['path' => request()->url(), 'query' => request()->query()]
-        );
     }
 }

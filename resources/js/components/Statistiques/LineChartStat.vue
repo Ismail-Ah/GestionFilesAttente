@@ -1,5 +1,6 @@
 <template>
-  <div class="row">
+  <div>
+    <div class="row">
       <div class="col-lg-3 col-6">
         <!-- small box -->
         <div class="small-box bg-info">
@@ -17,7 +18,6 @@
             <h3>{{ dataset[5] }}</h3>
             <p>Clients Servis</p>
           </div>
-
         </div>
       </div>
       <!-- ./col -->
@@ -28,7 +28,6 @@
             <h3>{{ formatTime(dataset[7]) }}</h3>
             <p>Temps Moyen d'Attente</p>
           </div>
-          
         </div>
       </div>
       <!-- ./col -->
@@ -45,102 +44,99 @@
     </div>
 
     <div class="row">
-              <div v-if="name === 'agencies'" class="col-md-6">
-                <TopAgences :timeFilter="timeFilter"></TopAgences>
-              </div>
-              <div v-if="name !== 'service'" class="col-md-6">
-                <TopServices :timeFilter="timeFilter" :name="name" :name_id="name_id"></TopServices>
-              </div>
-            </div>
+      <div v-if="name === 'agencies'" class="col-md-6">
+        <TopAgences :timeFilter="timeFilter"></TopAgences>
+      </div>
+      <div v-if="name !== 'service'" class="col-md-6">
+        <TopServices :timeFilter="timeFilter" :name="name" :name_id="name_id"></TopServices>
+      </div>
+    </div>
 
-
-
-
-  <div style="display: flex;">
-    <div class="card card-primary card-outline" style="width: 600px;height:350px;">
-      <div class="card-header">
-        <h3 class="card-title">
-          <i class="far fa-chart-bar"></i>
-          Line Chart
-        </h3>
-        <div class="card-tools">
-          <button type="button" class="btn btn-tool" data-card-widget="collapse">
-            <i class="fas fa-minus"></i>
-          </button>
-          <button type="button" class="btn btn-tool" data-card-widget="remove">
-            <i class="fas fa-times"></i>
-          </button>
+    <div style="display: flex;">
+      <div class="card card-primary card-outline" style="width: 600px; height: 350px;">
+        <div class="card-header">
+          <h3 class="card-title">
+            <i class="far fa-chart-bar"></i>
+            Total des Clients au Fil du Temps
+          </h3>
+          <div class="card-tools">
+            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+              <i class="fas fa-minus"></i>
+            </button>
+            <button type="button" class="btn btn-tool" data-card-widget="remove">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+        </div>
+        <div class="card-body">
+          <div id="line-chart" style="height: 300px; padding: 0px; position: relative;">
+            <canvas id="myChart" style="width: 100%; max-width: 500px;"></canvas>
+          </div>
         </div>
       </div>
-      <div class="card-body">
-        <div id="line-chart" style="height: 300px; padding: 0px; position: relative;">
-          <canvas id="myChart" style="width:100%; max-width:500px;"></canvas>
+      <div class="card card-primary card-outline" style="width: 600px; margin-left: 20px; height: 350px;">
+        <div class="card-header">
+          <h3 class="card-title">
+            <i class="far fa-chart-bar"></i>
+            Clients Servis vs. Clients Non Servis
+          </h3>
+          <div class="card-tools">
+            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+              <i class="fas fa-minus"></i>
+            </button>
+            <button type="button" class="btn btn-tool" data-card-widget="remove">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+        </div>
+        <div class="card-body">
+          <div id="line-chart" style="height: 300px; padding: 0px; position: relative;">
+            <canvas id="myChart2" style="width: 100%; max-width: 500px;"></canvas>
+          </div>
         </div>
       </div>
     </div>
-    <div class="card card-primary card-outline" style="width: 600px;margin-left: 20px;height:350px;">
-      <div class="card-header">
-        <h3 class="card-title">
-          <i class="far fa-chart-bar"></i>
-          Line Chart
-        </h3>
-        <div class="card-tools">
-          <button type="button" class="btn btn-tool" data-card-widget="collapse">
-            <i class="fas fa-minus"></i>
-          </button>
-          <button type="button" class="btn btn-tool" data-card-widget="remove">
-            <i class="fas fa-times"></i>
-          </button>
-        </div>
-      </div>
-      <div class="card-body">
-        <div id="line-chart" style="height: 300px; padding: 0px; position: relative;">
-          <canvas id="myChart2" style="width:100%; max-width:500px;"></canvas>
-        </div>
-      </div>
-    </div>
-  </div>
 
-  <div style="display: flex;">
-    <div class="card card-primary card-outline" style="width: 600px;height:350px;">
-      <div class="card-header">
-        <h3 class="card-title">
-          <i class="far fa-chart-bar"></i>
-          Line Chart
-        </h3>
-        <div class="card-tools">
-          <button type="button" class="btn btn-tool" data-card-widget="collapse">
-            <i class="fas fa-minus"></i>
-          </button>
-          <button type="button" class="btn btn-tool" data-card-widget="remove">
-            <i class="fas fa-times"></i>
-          </button>
+    <div style="display: flex;">
+      <div class="card card-primary card-outline" style="width: 600px; height: 350px;">
+        <div class="card-header">
+          <h3 class="card-title">
+            <i class="far fa-chart-bar"></i>
+            Temps Moyen d'Attente
+          </h3>
+          <div class="card-tools">
+            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+              <i class="fas fa-minus"></i>
+            </button>
+            <button type="button" class="btn btn-tool" data-card-widget="remove">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+        </div>
+        <div class="card-body">
+          <div id="line-chart" style="height: 300px; padding: 0px; position: relative;">
+            <canvas id="myChart3" style="width: 100%; max-width: 500px;"></canvas>
+          </div>
         </div>
       </div>
-      <div class="card-body">
-        <div id="line-chart" style="height: 300px; padding: 0px; position: relative;">
-          <canvas id="myChart3" style="width:100%; max-width:500px;"></canvas>
+      <div class="card card-primary card-outline" style="width: 600px; margin-left: 20px; height: 350px;">
+        <div class="card-header">
+          <h3 class="card-title">
+            <i class="far fa-chart-bar"></i>
+            Taux de Service Client          </h3>
+          <div class="card-tools">
+            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+              <i class="fas fa-minus"></i>
+            </button>
+            <button type="button" class="btn btn-tool" data-card-widget="remove">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
         </div>
-      </div>
-    </div>
-    <div class="card card-primary card-outline" style="width: 600px;margin-left: 20px;height:350px;">
-      <div class="card-header">
-        <h3 class="card-title">
-          <i class="far fa-chart-bar"></i>
-          Line Chart
-        </h3>
-        <div class="card-tools">
-          <button type="button" class="btn btn-tool" data-card-widget="collapse">
-            <i class="fas fa-minus"></i>
-          </button>
-          <button type="button" class="btn btn-tool" data-card-widget="remove">
-            <i class="fas fa-times"></i>
-          </button>
-        </div>
-      </div>
-      <div class="card-body">
-        <div id="line-chart" style="height: 300px; padding: 0px; position: relative;">
-          <canvas id="myChart4" style="width:100%; max-width:500px;"></canvas>
+        <div class="card-body">
+          <div id="line-chart" style="height: 300px; padding: 0px; position: relative;">
+            <canvas id="myChart4" style="width: 100%; max-width: 500px;"></canvas>
+          </div>
         </div>
       </div>
     </div>
@@ -157,11 +153,12 @@ export default {
   name: 'LineChartStat',
   data() {
     return {
-      dataset: [0, 0, 0, 0, 0,0,0,0],
+      dataset: [0, 0, 0, 0, 0, 0, 0, 0],
       myChart: null,
       myChart2: null,
       myChart3: null,
-      myChart4: null
+      myChart4: null,
+      updateInterval: null
     };
   },
   components: { TopAgences, TopServices },
@@ -188,112 +185,92 @@ export default {
       }
     },
     drawChart() {
-      if (this.myChart) {
-        this.myChart.destroy();
-      }
-      if (this.myChart2) {
-        this.myChart2.destroy();
-      }
-      if (this.myChart3) {
-        this.myChart3.destroy();
-      }
-      if (this.myChart4) {
-        this.myChart4.destroy();
-      }
+      if (this.myChart) this.myChart.destroy();
+      if (this.myChart2) this.myChart2.destroy();
+      if (this.myChart3) this.myChart3.destroy();
+      if (this.myChart4) this.myChart4.destroy();
 
+      const xValues = this.generateXValues();
+      
+      this.myChart = new Chart("myChart", {
+        type: "line",
+        data: {
+          labels: xValues,
+          datasets: [{
+            data: this.dataset[2],
+            borderColor: "blue",
+            fill: false,
+            label: 'Total Clients',
+          }]
+        },
+        options: this.getChartOptions('Total Clients')
+      });
+
+      this.myChart2 = new Chart("myChart2", {
+        type: "line",
+        data: {
+          labels: xValues,
+          datasets: [{
+            data: this.dataset[0],
+            borderColor: "green",
+            fill: false,
+            label: 'Clients Servis',
+          }, {
+            data: this.dataset[1],
+            borderColor: "red",
+            fill: false,
+            label: 'Clients Non Servis',
+          }]
+        },
+        options: this.getChartOptions('Clients Servis et Non Servis')
+      });
+
+      this.myChart3 = new Chart("myChart3", {
+        type: "line",
+        data: {
+          labels: xValues,
+          datasets: [{
+            data: this.dataset[3],
+            borderColor: "blue",
+            fill: false,
+            label: "Temps Moyen d'attente",
+          }]
+        },
+        options: this.getChartOptions("Temps Moyen d'attente en h")
+      });
+
+      this.myChart4 = new Chart("myChart4", {
+        type: "line",
+        data: {
+          labels: xValues,
+          datasets: [{
+            data: this.dataset[4],
+            borderColor: "green",
+            fill: false,
+            label: 'Taux de clients servis',
+          }]
+        },
+        options: this.getChartOptions('Taux de clients servis en %')
+      });
+    },
+    generateXValues() {
       let xValues = [];
-
+      const today = new Date();
       if (this.timeFilter === 1) {
-        // Generate xValues for hours from 8 to 19
-        xValues = Array.from({ length: 12 }, (_, i) => {
-          const hour = i + 8;
-          return `${hour}:00`;
-        });
+        xValues = Array.from({ length: 12 }, (_, i) => `${i + 8}:00`);
       } else if (this.timeFilter === 365) {
-        // Generate xValues for the last 12 months
-        const today = new Date();
         for (let i = 0; i < 12; i++) {
           const date = new Date(today.getFullYear(), today.getMonth() - i, 1);
-          const monthYear = date.toLocaleString('en-GB', { month: 'short', year: 'numeric' });
-          xValues.unshift(monthYear);
+          xValues.unshift(date.toLocaleString('en-GB', { month: 'short', year: 'numeric' }));
         }
       } else if (this.timeFilter === 30 || this.timeFilter === 7) {
-        // Generate xValues for the last 30 or 7 days
-        const today = new Date();
         for (let i = this.timeFilter - 1; i >= 0; i--) {
           const date = new Date(today);
           date.setDate(today.getDate() - i);
-          const formattedDate = date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
-          xValues.push(formattedDate);
+          xValues.push(date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }));
         }
       }
-
-    
-        // Chart for Total Clients
-        this.myChart = new Chart("myChart", {
-          type: "line",
-          data: {
-            labels: xValues,
-            datasets: [{
-              data: this.dataset[2], // Assuming this is an array of data points
-              borderColor: "blue",
-              fill: false,
-              label: 'Total Clients',
-            }]
-          },
-          options: this.getChartOptions('Total Clients')
-        });
-
-        // Chart for Clients Servis and Clients Non Servis
-        this.myChart2 = new Chart("myChart2", {
-          type: "line",
-          data: {
-            labels: xValues,
-            datasets: [{
-              data: this.dataset[0],
-              borderColor: "green",
-              label: 'Clients Servis',
-              fill: false
-            }, {
-              data: this.dataset[1],
-              borderColor: "red",
-              fill: false,
-              label: 'Clients Non Servis',
-            }]
-          },
-          options: this.getChartOptions('Clients Servis et Non Servis')
-        });
-
-        // Chart for Temps Moyen d'attente
-        this.myChart3 = new Chart("myChart3", {
-          type: "line",
-          data: {
-            labels: xValues,
-            datasets: [{
-              data: this.dataset[3],
-              borderColor: "blue",
-              fill: false,
-              label: "Temps Moyen d'attente",
-            }]
-          },
-          options: this.getChartOptions("Temps Moyen d'attente en h")
-        });
-
-        // Chart for Taux de clients servis
-        this.myChart4 = new Chart("myChart4", {
-          type: "line",
-          data: {
-            labels: xValues,
-            datasets: [{
-              data: this.dataset[4],
-              borderColor: "green",
-              label: 'Taux de clients servis',
-              fill: false
-            }]
-          },
-          options: this.getChartOptions('Taux de clients servis en %')
-        });
-
+      return xValues;
     },
     getChartOptions(yAxisLabel) {
       return {
@@ -311,17 +288,11 @@ export default {
       };
     },
     getXAxisTitle() {
-      if (this.timeFilter === 1) {
-        return 'Hours';
-      } else if (this.timeFilter === 365) {
-        return 'Last 12 Months';
-      } else if (this.timeFilter === 30) {
-        return 'Last 30 Days';
-      } else if (this.timeFilter === 7) {
-        return 'Last 7 Days';
-      } else {
-        return '';
-      }
+      if (this.timeFilter === 1) return 'Hours';
+      if (this.timeFilter === 365) return 'Last 12 Months';
+      if (this.timeFilter === 30) return 'Last 30 Days';
+      if (this.timeFilter === 7) return 'Last 7 Days';
+      return '';
     },
     formatTime(heure) {
       const heures = parseInt(heure);
@@ -331,6 +302,10 @@ export default {
   },
   mounted() {
     this.getStatistiques();
+    this.updateInterval = setInterval(this.getStatistiques, 10000);
+  },
+  beforeDestroy() {
+    clearInterval(this.updateInterval);
   },
   watch: {
     name: 'getStatistiques',
@@ -339,9 +314,6 @@ export default {
   },
 };
 </script>
-
-
-
 
 <style scoped>
 /* Add any custom styles here */

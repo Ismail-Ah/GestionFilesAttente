@@ -25,6 +25,7 @@
     "dependencies": {
         "@fortawesome/fontawesome-free": "^6.6.0",
         "chart.js": "^4.4.3",
+        "emitting-analog-clock": "^1.1.0",
         "jquery": "^3.7.1",
         "select2": "^4.1.0-rc.0",
         "simple-keyboard": "^3.7.94",

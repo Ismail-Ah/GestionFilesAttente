@@ -29,11 +29,9 @@ class StatistiqueController extends Controller
     }
     
     public function getServiceStatistiques(Service $service)
-    {
-        if (auth()->user()->role === 'AGENT' && auth()->user()->id != $service->user_id) {
-            return response()->json('Accès Refusé');
-        }
-        
+{
+    // Allow access to statistics for guests
+    if (!auth()->check()) {
         $fileAttente = $service->fileAttente()->latest()->first();
         $statistics = $fileAttente ? $this->calculateStatistics($fileAttente) : [
             'clientsEnAttente' => 0,
@@ -43,6 +41,24 @@ class StatistiqueController extends Controller
     
         return response()->json($statistics);
     }
+
+    // For authenticated users, check their role and associated service
+    $user = auth()->user();
+    if ($user->role === 'AGENT' && $user->id != $service->user_id) {
+        return response()->json(['error' => 'Accès Refusé'], 403); // Using 403 status for forbidden access
+    }
+
+    // If the user passes the check, return the statistics
+    $fileAttente = $service->fileAttente()->latest()->first();
+    $statistics = $fileAttente ? $this->calculateStatistics($fileAttente) : [
+        'clientsEnAttente' => 0,
+        'clientsServis' => 0,
+        'tempsMoyenAttente' => 0,
+    ];
+
+    return response()->json($statistics);
+}
+
     
     private function agenceStatistiques(Agence $agence, $userId = null)
     {

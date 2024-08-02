@@ -18,8 +18,8 @@
                         <div class="text-container">
                             <h1>Bienvenue sur Redal !</h1>
                             <p class="p-large">Notre plateforme simplifie la gestion des files d'attente pour tous vos services. Planifiez vos visites et suivez vos demandes en temps réel pour une expérience fluide et agréable.</p>
-                            <a class="btn-solid-lg page-scroll" href="/register">S'inscrire</a>
                             <a class="btn-solid-lg page-scroll" href="/ticket-dispenser">Distributeur de Tickets</a>
+                            <a class="btn-solid-lg page-scroll" href="/live-queue">File</a>
                         </div> <!-- end of text-container -->
                     </div> <!-- end of col -->
                     <div class="col-lg-6 col-xl-7">

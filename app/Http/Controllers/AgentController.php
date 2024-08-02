@@ -49,7 +49,7 @@ class AgentController extends Controller
     }
     public function getAgents()
     {
-        $agents = User::where('role', 'AGENT')->paginate(4);
+        $agents = User::where('role', 'AGENT')->get();
         foreach($agents as $agent){
             $agent->agence = $agent->agence();
             $agent->services = $agent->services();

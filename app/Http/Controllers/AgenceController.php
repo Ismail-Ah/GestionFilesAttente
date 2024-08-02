@@ -51,7 +51,7 @@ class AgenceController extends Controller
 
     public function getAgences(){
 
-            $agencies = Agence::paginate(4);
+            $agencies = Agence::get();
 
         return response()->json($agencies);
     }

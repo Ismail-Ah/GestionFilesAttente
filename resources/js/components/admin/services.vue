@@ -7,11 +7,12 @@
       <button
         v-for="service in paginatedServices"
         :key="service.id"
+        :disabled="service.etat!='ACTIF'"
         class="btn-solid-lg page-scroll"
         @click="clickService(service.id, action)"
       >
-        {{ service.nom }}
-        <p class="agency-details">{{ service.etat }}</p>
+        <h4>{{ service.nom }}</h4>
+        <p class="agency-details" :style="{color:service.etat==='ACTIF'?'rgb(8, 235, 8)':'red'}">{{ service.etat }}</p>
       </button>
       <button
         v-for="placeholder in placeholders"
@@ -197,9 +198,22 @@ export default {
   cursor: pointer;
 }
 
-.pagination button:disabled {
+button:disabled {
   background-color: grey;
+  border: grey;
   cursor: not-allowed;
+}
+
+/* Override hover styles for disabled buttons */
+button:disabled:hover {
+  background-color: grey; /* Keep the background color the same */
+  border: grey; /* Keep the border color the same */
+}
+
+.btn-solid-lg.page-scroll:disabled:hover {
+  background-color: grey;
+  border-color: grey;
+  color: #fff;
 }
 
 .placeholder {
@@ -214,6 +228,5 @@ export default {
 
 .agency-details {
   margin: 0.25rem 0;
-  color: rgb(8, 235, 8);
 }
 </style>

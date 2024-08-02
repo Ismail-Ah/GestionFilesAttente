@@ -63,4 +63,9 @@ class ServicePolicy
     {
         return $user->role==='ADMINISTRATION';
     }
+
+    public function prendreTicket(?User $user,Service $service): bool
+    {
+        return $service->etat==='ACTIF';
+    }
 }

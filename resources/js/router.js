@@ -16,14 +16,17 @@ import EditAgence from './components/admin/editAgence.vue';
 import Select from './components/select.vue';
 import EditService from './components/admin/editService.vue';
 import EditAgent from './components/admin/editAgent.vue';
+import LiveQueue from './components/queue/liveQueue.vue';
+import HomeQueue from './components/queue/home.vue';
 
 const routesTicketDispenser = [
-    {path : '/ticket-dispenser',component:HomePage},
-    {path : '/ticket-dispenser/agences',component:SelectAgence},
+    {path : '/ticket-dispenser',component:HomePage,props: route => ({ url:route.params.url||'/ticket-dispenser/' })},
+    {path : '/ticket-dispenser/agences',name:'ticketDispenserAgences',component:SelectAgence,props: route => ({ url:route.params.url||'/ticket-dispenser/' })},
     { path: '/ticket-dispenser/agences/:id', component: HomeVisitor },
     { path: '/agence/:id/ticket-dispenser/services', component: ServiceSelection },
     { path: '/agence/:agence_id/ticket-dispenser/services/:service_id',component: serviceStatistique},
     { path : '/agence/:agence_id/ticket-dispenser/services/:service_id/ticket',component: TicketPrint},
+    { path: '/live-queue/agences/:id', component: HomeQueue },
 ];
 
 const routesHome=[
@@ -38,6 +41,8 @@ const routesHome=[
           profile_id: route.params.profile_id || 0 
         })
       },
+
+    {path:'/live-queue',component:LiveQueue},
     ]
 
 const routesAdmin = [

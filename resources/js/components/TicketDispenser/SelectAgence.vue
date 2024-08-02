@@ -75,7 +75,7 @@ export default {
         });
     },
     clickAgence(id) {
-      this.$router.push(`/ticket-dispenser/agences/${id}`);
+      this.$router.push(`${this.$route.params.url}agences/${id}`);
     },
     nextPage() {
       if (this.currentPage < this.totalPages) {

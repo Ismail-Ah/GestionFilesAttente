@@ -32,7 +32,7 @@
     
             <div class="progress-group" v-for="(service, index) in service" :key="service.id">
               {{ service.nom }}
-              <span class="float-right"><b v-if="data[3]=='h'">{{ formatTime(data[index]) }}</b><b v-else>{{ data[index] }}<b v-if="data[3]=='%'">%</b></b></span>
+              <span class="float-right"><b v-if="data[3]=='h'">{{ formatTime(data[index]) }}</b><b v-else>{{ Number.isInteger(data[index])?data[index]:data[index].toFixed(2) }}<b v-if="data[3]=='%'">%</b></b></span>
               <div class="progress progress-sm">
                 <div class="progress-bar bg-primary" :style="{ width: (data[index]) + '%' }"></div>
               </div>
@@ -92,11 +92,23 @@
         const heures = Math.floor(minutes / 60);
         const remainingMinutes = minutes % 60;
         return `${heures}h ${parseInt(remainingMinutes)}m`;
-      }
+      },
+      startAutoUpdate() {
+      this.updateInterval = setInterval(() => {
+        this.getTopAgences(this.currentFilterLabel);
+      }, 10000);
     },
-    created() {
-      this.getTopServices('tauxDeServire');
-    },
+    stopAutoUpdate() {
+      clearInterval(this.updateInterval);
+    }
+  },
+  created() {
+    this.getTopServices('tauxDeServire');
+    this.startAutoUpdate();
+  },
+  beforeDestroy() {
+    this.stopAutoUpdate();
+  },
     watch: {
     name(newVal) {
       this.getTopServices(this.currentFilterLabel);

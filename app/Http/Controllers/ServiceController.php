@@ -68,20 +68,46 @@ class ServiceController extends Controller
     public function getServices()
     {
         $services = auth()->user()->role === 'AGENT'
-            ? auth()->user()->services()->with('agence', 'agent')->paginate(4)
-            : Service::with('agence', 'agent')->paginate(4);
+            ? auth()->user()->services()->with('agence', 'agent')->get()
+            : Service::with('agence', 'agent')->get();
 
         return response()->json($services);
     }
 
-    public function getServices2()
+    public function getServices2(Agence $agence)
+{
+    // If the user is not authenticated, allow access to services
+    if (!auth()->check()) {
+        return response()->json($agence->services);
+    }
+
+    // For authenticated users, check their role and agency
+    $user = auth()->user();
+    if ($user->role === 'AGENT' && $user->agence->id != $agence->id) {
+        return response()->json(null); // or appropriate response indicating restricted access
+    }
+
+    // If the user passes the check, return the services
+    return response()->json($agence->services);
+}
+
+
+    public function getServicesForQueue(Agence $agence)
     {
-        $services = auth()->user()->role === 'AGENT'
-            ? auth()->user()->services
-            : Service::all();
-
-        return response()->json($services);
+        $services = $agence->services;
+        
+        foreach ($services as $service) {
+            $fil = $service->fileAttente()->latest()->first();
+            // Get the current ticket
+            $currentTicket = $fil->tickets()->where('statut', 'EN_ATTENT')->first();
+            $service->currentTicket = $currentTicket ? $currentTicket->numéro : null;
+            $agence_nom = $service->agence->nom;
+        }
+    
+        return response()->json(["services"=>$services,"agence_nom"=>$agence_nom]);
     }
+    
+
 
     public function deleteService(Service $service)
     {
@@ -143,6 +169,11 @@ class ServiceController extends Controller
     }
 
     public function getServicesOfAgent(User $user){
-        return response()->json($user->services()->with('agence','agent')->paginate(4));
+        return response()->json($user->services()->with('agence','agent')->get());
+    }
+    public function changeEtatService(Service $service){
+        $service->etat = $service->etat==='ACTIF'?'INACTIF':'ACTIF';
+        $service->save();
+        return response()->json();
     }
 }
