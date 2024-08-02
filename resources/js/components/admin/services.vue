@@ -7,12 +7,14 @@
       <button
         v-for="service in paginatedServices"
         :key="service.id"
-        :disabled="service.etat!='ACTIF'"
+        :disabled="service.etat !== 'ACTIF'"
         class="btn-solid-lg page-scroll"
         @click="clickService(service.id, action)"
       >
         <h4>{{ service.nom }}</h4>
-        <p class="agency-details" :style="{color:service.etat==='ACTIF'?'rgb(8, 235, 8)':'red'}">{{ service.etat }}</p>
+        <p class="agency-details" :style="{ color: service.etat === 'ACTIF' ? 'rgb(8, 235, 8)' : 'red' }">
+          {{ service.etat }}
+        </p>
       </button>
       <button
         v-for="placeholder in placeholders"
@@ -75,7 +77,15 @@ export default {
     getServices() {
       axios.get(`/agence/${this.id}/services`)
         .then(response => {
-          this.services = response.data;
+          this.services = response.data.map(service => {
+            const currentTime = new Date().toLocaleTimeString('it-IT');
+            if (currentTime < service.heure_debut && service.etat==='ACTIF') {
+              service.etat = `Commence à ${service.heure_debut}`;
+            } else if (currentTime > service.heure_fin && service.etat==='ACTIF') {
+              service.etat = `Terminé à ${service.heure_fin}`;
+            }
+            return service;
+          });
           this.loading = false; // Stop loading when data is fetched
         })
         .catch(error => {
@@ -104,7 +114,6 @@ export default {
 };
 </script>
 
-  
 <style scoped>
 :root {
   --shadow-color: 0deg 0% 45%;

@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Policies;
-
+use Carbon\Carbon;
 use App\Models\Service;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
@@ -64,8 +64,17 @@ class ServicePolicy
         return $user->role==='ADMINISTRATION';
     }
 
-    public function prendreTicket(?User $user,Service $service): bool
-    {
-        return $service->etat==='ACTIF';
-    }
+   
+
+        public function prendreTicket(?User $user, Service $service): bool
+        {
+            $currentDateTime = Carbon::now();
+
+            return $service->etat === 'ACTIF' &&
+                $currentDateTime->between(
+                    Carbon::createFromFormat('H:i:s', $service->heure_debut),
+                    Carbon::createFromFormat('H:i:s', $service->heure_fin)
+                );
+        }
+
 }
