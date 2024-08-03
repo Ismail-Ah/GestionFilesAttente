@@ -1,7 +1,7 @@
 <template>
   <div class="ticket-container">
     <div v-if="loading">
-      <loading-spinner />
+      <LoadingSpinner></LoadingSpinner>
     </div>
     <div v-else class="ticket-print" id="printable-content">
       <h2>{{ nomAgence }}</h2>

@@ -13,19 +13,19 @@ class TicketController extends Controller
 {
     public function createTicket(Agence $agence, Service $service)
     {
-        // Get the latest ticket for the service
-        $fil = $service->fileAttente()->with('tickets')->latest()->first();
-        $dernierTicket = $fil->tickets()->latest()->first();
+        // Get the latest ticket number from the latest file attente
+        $latestFileAttente = $service->fileAttente()->latest()->first();
+        $latestTicket = $latestFileAttente ? $latestFileAttente->tickets()->latest()->first() : null;
 
         // Create a new ticket
+        $ticketNumber = $latestTicket ? $latestTicket->numéro + 1 : 1;
         $ticket = Ticket::create([
-            'numéro' => $dernierTicket ? $dernierTicket->numéro + 1 : 1,
-            'files_attente_id' => $fil->id,
+            'numéro' => $ticketNumber,
+            'files_attente_id' => $latestFileAttente->id,
             'statut' => "EN_ATTENT",
         ]);
-        
-        $fil->increment('ClientsEnAttentes');
-        $fil->save();
+
+        $latestFileAttente->increment('ClientsEnAttentes');
 
         return response()->json(['message' => 'Ticket created successfully!', 'ticket' => $ticket], 201);
     }
@@ -39,19 +39,20 @@ class TicketController extends Controller
     {
         $ticket->update(['statut' => 'TRAITE']);
 
-        $fil = Files_Attente::find($ticket->files_attente_id);
+        $fileAttente = Files_Attente::find($ticket->files_attente_id);
 
-        if (!$fil) {
+        if (!$fileAttente) {
             return response()->json(["error" => "FileAttente not found"], 404);
         }
 
-        $fil->decrement('ClientsEnAttentes');
-        $fil->increment('ClientsTraites');
+        $fileAttente->decrement('ClientsEnAttentes');
+        $fileAttente->increment('ClientsTraites');
 
-        $tempsAttente = (strtotime($ticket->updated_at) - strtotime($ticket->created_at)) / 60;
-        $fil->tempsMoyenAttente = (($fil->tempsMoyenAttente * ($fil->ClientsTraites - 1)) + $tempsAttente) / $fil->ClientsTraites;
+        $waitingTime = (strtotime($ticket->updated_at) - strtotime($ticket->created_at)) / 60;
+        $totalWaitingTime = $fileAttente->tempsMoyenAttente * ($fileAttente->ClientsTraites - 1);
+        $fileAttente->tempsMoyenAttente = ($totalWaitingTime + $waitingTime) / $fileAttente->ClientsTraites;
 
-        $fil->save();
+        $fileAttente->save();
 
         return response()->json(["message" => "Ticket validated successfully"]);
     }
@@ -64,11 +65,12 @@ class TicketController extends Controller
 
     public function getServiceTickets(Service $service)
     {
-        if (auth()->user()->role === 'Agent' && $service->user_id != auth()->user()->id) {
+        if (auth()->user()->role === 'AGENT' && $service->user_id != auth()->user()->id) {
             return response()->json("Accés refusé", 403);
         }
 
-        $tickets = $this->getLatestTickets($service->fileAttente()->latest()->first());
+        $fileAttente = $service->fileAttente()->latest()->first();
+        $tickets = $fileAttente ? $fileAttente->tickets : collect();
 
         return response()->json($this->addServiceAndAgenceNames($tickets));
     }
@@ -76,30 +78,25 @@ class TicketController extends Controller
     public function getAllTickets()
     {
         $userId = auth()->user()->id;
-        if (auth()->user()->role === 'AGENT') {
-            $tickets = Ticket::whereHas('fileAttente.service', function ($query) use ($userId) {
+        $tickets = Ticket::whereHas('fileAttente.service', function ($query) use ($userId) {
+            if (auth()->user()->role === 'AGENT') {
                 $query->where('user_id', $userId);
-            })->get();
-        } else {
-            $tickets = Ticket::get();
-        }
+            }
+        })->get();
 
         return response()->json($this->addServiceAndAgenceNames($tickets));
     }
 
     public function getAgenceTickets(Agence $agence)
     {
-        // Check if the user is an agent and belongs to the correct agency
         if (auth()->user()->role === 'AGENT' && auth()->user()->agence->id != $agence->id) {
             return response()->json("Accés refusé", 403);
         }
-    
-        // Fetch all tickets related to the agency's services
+
         $tickets = Ticket::whereHas('fileAttente.service', function ($query) use ($agence) {
             $query->where('agence_id', $agence->id);
         })->get();
-    
-        // Add service and agency names to the tickets
+
         return response()->json($this->addServiceAndAgenceNames($tickets));
     }
 
@@ -108,14 +105,8 @@ class TicketController extends Controller
         $tickets = Ticket::whereHas('fileAttente.service', function ($query) use ($user) {
             $query->where('user_id', $user->id);
         })->get();
-    
-        // Add service and agency names to the tickets
-        return response()->json($this->addServiceAndAgenceNames($tickets));
-    }
 
-    private function getLatestTickets($fileAttente)
-    {
-        return $fileAttente ? $fileAttente->tickets()->get() : collect();
+        return response()->json($this->addServiceAndAgenceNames($tickets));
     }
 
     private function addServiceAndAgenceNames($tickets)
@@ -123,7 +114,6 @@ class TicketController extends Controller
         foreach ($tickets as $ticket) {
             $ticket->service = $ticket->service;
             $ticket->nom_agence = $ticket->service->agence->nom;
-            
         }
 
         return $tickets;

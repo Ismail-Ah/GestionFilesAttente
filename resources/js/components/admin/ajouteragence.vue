@@ -5,6 +5,7 @@
         <div style="margin: auto;width: 50%;">
           <AddItem
             name="Agence"
+            title="Ajouter un Agence"
             :inputs="inputs"
             action="/agencies"
           />

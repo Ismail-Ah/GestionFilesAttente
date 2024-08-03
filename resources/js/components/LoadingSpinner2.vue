@@ -9,7 +9,7 @@
 
 <script>
 export default {
-  name: 'LoadingSpinner'
+  name: 'LoadingSpinner2'
 };
 </script>
 
@@ -19,7 +19,7 @@ export default {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 90vh;
+
 }
 
 
@@ -31,14 +31,15 @@ export default {
   height: 1.25rem;
   margin: -0.625rem 0 0 -1.875rem; /* width and height divided by two */
   text-align: center;
+  margin-top: 50px;
 }
 
 .spinner > div {
   display: inline-block;
-  width: 1rem;
-  height: 1rem;
+  width: 10px;
+  height: 10px;
   border-radius: 100%;
-  background-color: #5f4dee;
+  background-color: #000;
   -webkit-animation: sk-bouncedelay 1.4s infinite ease-in-out both;
   animation: sk-bouncedelay 1.4s infinite ease-in-out both;
 }

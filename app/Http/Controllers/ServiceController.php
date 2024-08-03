@@ -5,39 +5,18 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\Agence;
 use App\Models\Service;
-use Illuminate\Http\Request;
 use App\Models\Files_Attente;
-use Illuminate\Validation\Rule;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class ServiceController extends Controller
 {
     public function store(Request $request, Agence $agence)
     {
-        // Validation des champs
-        $validator = Validator::make($request->all(), [
-            'nom' => 'required|string|max:255',
-            'heure_debut' => 'required|date_format:H:i',
-            'heure_fin' => 'required|date_format:H:i',
-            'nom_en' => 'nullable|string|max:255',  // Optional translation in English
-            'nom_ar' => 'nullable|string|max:255',  // Optional translation in Arabic
-        ]);
+        $this->validateService($request);
 
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
-
-        // Création du service avec les champs additionnels
-        $service = $agence->services()->create([
-            'nom' => $request->input('nom'),
-            'etat' => 'ACTIF',
-            'heure_debut' => $request->input('heure_debut'),
-            'heure_fin' => $request->input('heure_fin'),
-            'nom_en' => $request->input('nom_en'), // Translation in English
-            'nom_ar' => $request->input('nom_ar'), // Translation in Arabic
-        ]);
-
-        // Création de la file d'attente associée
+        $service = $agence->services()->create($this->serviceData($request));
         Files_Attente::create([
             'nom' => "Service_File_D'Attente",
             'service_id' => $service->id,
@@ -48,10 +27,7 @@ class ServiceController extends Controller
 
     public function fetchServices()
     {
-        $services = auth()->user()->role === 'AGENT' 
-            ? auth()->user()->services()->latest()->get() 
-            : Service::latest()->get();
-
+        $services = $this->getServicesQuery()->latest()->get();
         return response()->json($services);
     }
 
@@ -59,55 +35,46 @@ class ServiceController extends Controller
     {
         return response()->json([
             'service' => $service,
-            'numéroTicket' => $service->ticket()->numéro,
+            'numéroTicket' => $service->ticket()->numéro ?? null,
             'nomAgence' => $service->agence->nom,
             'agence_id' => $service->agence->id,
         ]);
     }
 
-    public function getServices()
+    public function getServices(Agence $agence = null)
     {
-        $services = auth()->user()->role === 'AGENT'
-            ? auth()->user()->services()->with('agence', 'agent')->get()
-            : Service::with('agence', 'agent')->get();
-
+        $query = $agence ? $agence->services() : Service::query();
+        $services = $query->with('agence', 'agent')->get();
         return response()->json($services);
     }
 
     public function getServices2(Agence $agence)
-{
-    // If the user is not authenticated, allow access to services
-    if (!auth()->check()) {
+    {
+        if (!auth()->check()) {
+            return response()->json($agence->services);
+        }
+
+        $user = auth()->user();
+        if ($user->role === 'AGENT' && $user->agence->id != $agence->id) {
+            return response()->json(null); // or appropriate response indicating restricted access
+        }
+
         return response()->json($agence->services);
     }
 
-    // For authenticated users, check their role and agency
-    $user = auth()->user();
-    if ($user->role === 'AGENT' && $user->agence->id != $agence->id) {
-        return response()->json(null); // or appropriate response indicating restricted access
-    }
-
-    // If the user passes the check, return the services
-    return response()->json($agence->services);
-}
-
-
     public function getServicesForQueue(Agence $agence)
     {
-        $services = $agence->services;
-        
-        foreach ($services as $service) {
-            $fil = $service->fileAttente()->latest()->first();
-            // Get the current ticket
-            $currentTicket = $fil->tickets()->where('statut', 'EN_ATTENT')->first();
-            $service->currentTicket = $currentTicket ? $currentTicket->numéro : null;
-            $agence_nom = $service->agence->nom;
-        }
-    
-        return response()->json(["services"=>$services,"agence_nom"=>$agence_nom]);
-    }
-    
+        $services = $agence->services->map(function ($service) {
+            $file = $service->fileAttente()->latest()->first();
+            $service->currentTicket = $file ? $file->tickets()->where('statut', 'EN_ATTENT')->first()->numéro ?? null : null;
+            return $service;
+        });
 
+        return response()->json([
+            'services' => $services,
+            'agence_nom' => $agence->nom
+        ]);
+    }
 
     public function deleteService(Service $service)
     {
@@ -117,45 +84,10 @@ class ServiceController extends Controller
 
     public function updateService(Request $request, Service $service)
     {
-        $input = $request->all();
+        $this->validateService($request, $service->id);
 
-        if (!$this->validateTimeFormat($input['heure_debut']) || !$this->validateTimeFormat($input['heure_fin'], true)) {
-            return response()->json(['errors' => ['Heure de début ou Heure de fin n\'est pas au format valide.']], 422);
-        }
-
-        $validator = Validator::make($input, [
-            'nom' => [
-                'required',
-                'string',
-                'max:255',
-                Rule::unique('services')->where(fn($query) => $query->where('agence_id', $request->input('agence_id')))->ignore($service->id),
-            ],
-            'heure_debut' => 'required',
-            'heure_fin' => 'required',
-            'nom_en' => 'nullable|string|max:255',  // Optional translation in English
-            'nom_ar' => 'nullable|string|max:255',  // Optional translation in Arabic
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
-
-        $service->update([
-            'nom' => $request->input('nom'),
-            'heure_debut' => $request->input('heure_debut'),
-            'heure_fin' => $request->input('heure_fin'),
-            'nom_en' => $request->input('nom_en'), // Translation in English
-            'nom_ar' => $request->input('nom_ar'), // Translation in Arabic
-        ]);
-
-        return response()->json(['message' => 'Service modifié avec succès!', 'service' => $service], 201);
-    }
-
-    protected function validateTimeFormat($value, $includeSeconds = false)
-    {
-        return $includeSeconds 
-            ? \DateTime::createFromFormat('H:i:s', $value) !== false 
-            : \DateTime::createFromFormat('H:i', $value) !== false;
+        $service->update($this->serviceData($request));
+        return response()->json(['message' => 'Service modifié avec succès!', 'service' => $service], 200);
     }
 
     public function showFormAjouterService(Agence $agence)
@@ -168,12 +100,50 @@ class ServiceController extends Controller
         return view('editer-service', ["role" => auth()->user()->role]);
     }
 
-    public function getServicesOfAgent(User $user){
-        return response()->json($user->services()->with('agence','agent')->get());
+    public function getServicesOfAgent(User $user)
+    {
+        return response()->json($user->services()->with('agence', 'agent')->get());
     }
-    public function changeEtatService(Service $service){
-        $service->etat = $service->etat==='ACTIF'?'INACTIF':'ACTIF';
+
+    public function changeEtatService(Service $service)
+    {
+        $service->etat = $service->etat === 'ACTIF' ? 'INACTIF' : 'ACTIF';
         $service->save();
         return response()->json();
+    }
+
+    private function validateService(Request $request, $ignoreId = null)
+    {
+        Validator::make($request->all(), [
+            'nom' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('services')->ignore($ignoreId),
+            ],
+            'heure_debut' => 'required|date_format:H:i',
+            'heure_fin' => 'required|date_format:H:i',
+            'nom_en' => 'nullable|string|max:255',
+            'nom_ar' => 'nullable|string|max:255',
+        ])->validate();
+    }
+
+    private function serviceData(Request $request)
+    {
+        return [
+            'nom' => $request->input('nom'),
+            'etat' => 'ACTIF',
+            'heure_debut' => $request->input('heure_debut'),
+            'heure_fin' => $request->input('heure_fin'),
+            'nom_en' => $request->input('nom_en'),
+            'nom_ar' => $request->input('nom_ar'),
+        ];
+    }
+
+    private function getServicesQuery()
+    {
+        return auth()->user()->role === 'AGENT'
+            ? auth()->user()->services()
+            : Service::query();
     }
 }

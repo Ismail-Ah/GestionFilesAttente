@@ -1,15 +1,19 @@
 <template>
-  <div class="card card-primary">
+  <div class="card card-primary" style="margin-top: 20px">
     <div class="card-header">
       <h3 class="card-title">{{ title }}</h3>
-      <div class="card-tools">
+      <div v-if="title!='Ajouter un Service' && title!='Ajouter un Agence'" class="card-tools">
         <button type="button" class="btn btn-tool btn-danger bg-danger" data-card-widget="collapse" @click="deleteItem">
           <i class="fas fa-trash"></i> Supprimer {{ name }}
         </button>
       </div>
     </div>
 
-    <form @submit.prevent="handleSubmit">
+    <form @submit.prevent="handleSubmit" class="form-container">
+      <div v-if="loading" class="spinner-wrapper">
+        <LoadingSpinner3 />
+      </div>
+
       <div class="card-body">
         <div v-for="input in inputs" :key="input.id" class="form-group">
           <label :for="input.id">{{ input.label }}</label>
@@ -44,9 +48,13 @@
 import axios from 'axios';
 import Keyboard from 'simple-keyboard';
 import 'simple-keyboard/build/css/index.css';
+import LoadingSpinner3 from '../LoadingSpinner3.vue'; // Import your spinner component
 
 export default {
   name: 'AddItem',
+  components: {
+    LoadingSpinner3
+  },
   props: {
     title: {
       type: String,
@@ -71,11 +79,13 @@ export default {
       successMessage: '',
       errorMessage: '',
       keyboard: null,
-      showKeyboard: false
+      showKeyboard: false,
+      loading: false // Track loading state
     };
   },
   methods: {
     handleSubmit() {
+      this.loading = true; // Show spinner
       const data = this.inputs.reduce((obj, input) => {
         obj[input.id] = input.model;
         return obj;
@@ -92,6 +102,9 @@ export default {
           } else {
             console.error('Error updating service:', error.message);
           }
+        })
+        .finally(() => {
+          this.loading = false; // Hide spinner
         });
     },
     deleteItem() {
@@ -117,7 +130,7 @@ export default {
     },
     showArabicKeyboard() {
       if (!this.keyboard) {
-        this.showKeyboard=true;
+        this.showKeyboard = true;
         this.keyboard = new Keyboard({
           onChange: input => this.onChange(input),
           onKeyPress: button => this.onKeyPress(button),
@@ -138,13 +151,13 @@ export default {
           }
         });
         this.keyboard.setOptions({
-        inputName: "nom_ar",
-        input: this.inputs.find(input => input.id === 'nom_ar').model
-      });
+          inputName: "nom_ar",
+          input: this.inputs.find(input => input.id === 'nom_ar').model
+        });
+      } else {
+        this.keyboard = null;
+        this.showKeyboard = false;
       }
-      else {this.keyboard=null;this.showKeyboard=false;}
-
-      
     },
     onChange(input) {
       const inputField = this.inputs.find(input => input.id === 'nom_ar');
@@ -173,7 +186,6 @@ export default {
     },
     handleOk() {
       this.showKeyboard = false;
-      // Delay keyboard destruction to allow click to register
       setTimeout(() => {
         this.keyboard = null;
       }, 100);
@@ -186,7 +198,6 @@ export default {
     },
     handleQuit() {
       this.showKeyboard = false;
-      // Delay keyboard destruction to allow click to register
       setTimeout(() => {
         this.keyboard = null;
       }, 100);
@@ -212,15 +223,15 @@ export default {
 
 .arabic-input {
   direction: rtl;
-  font-family: 'Arial', sans-serif; /* You can use a specific Arabic font if needed */
+  font-family: 'Arial', sans-serif;
 }
 
 .simple-keyboard {
   position: fixed;
   top: 0;
-  background-color:#219EBC;
+  background-color: #219EBC;
   width: 50%;
-  max-width: 600px; /* Adjust the width of the keyboard */
+  max-width: 600px;
   z-index: 9999;
 }
 
@@ -232,5 +243,23 @@ export default {
 
 .simple-keyboard .hg-key {
   margin: 2px;
+}
+
+.form-container {
+  position: relative; /* To position the spinner absolutely within the form */
+}
+
+.spinner-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.8); /* Optional: to give a background overlay */
+  z-index: 1000; /* Ensure it appears above other content */
 }
 </style>

@@ -1,8 +1,6 @@
 <template>
-  <div v-if="loading">
-    <LoadingSpinner></LoadingSpinner>
-  </div>
-  <div v-else class="card">
+  
+  <div class="card">
     <div class="card-header border-transparent">
       <h3 class="card-title">Derniers Tickets</h3>
       <div class="card-tools">
@@ -24,7 +22,10 @@
         </button>
       </div>
     </div>
-    <div class="card-body p-0">
+    <div v-if="loading">
+    <LoadingSpinner2></LoadingSpinner2>
+  </div>
+    <div v-else class="card-body p-0">
       <div class="table-responsive">
         <table class="table m-0">
           <thead>
@@ -75,11 +76,11 @@
 
 <script>
 import axios from 'axios';
-import LoadingSpinner from '../LoadingSpinner.vue';
+import LoadingSpinner2 from '../LoadingSpinner2.vue';
 
 export default {
   name: 'StatTickets',
-  components: { LoadingSpinner },
+  components: { LoadingSpinner2 },
   data() {
     return {
       tickets: [],

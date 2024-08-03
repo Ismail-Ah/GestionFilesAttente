@@ -5,7 +5,6 @@ import serviceStatistique from './components/TicketDispenser/serviceStatistique.
 import TicketPrint from './components/TicketDispenser/ticket.vue';
 import ajouterAgence from './components/admin/ajouteragence.vue';
 import ajouterService from './components/admin/ajouterService.vue';
-import ValidateTicket from './components/agent/validateTicket.vue';
 import CreateAgentAcount from './components/admin/createAgentAcount.vue';
 import Dashboard from './components/dashboard/dashboard.vue';
 import Statistiques from './components/Statistiques/statistiques.vue';
@@ -55,13 +54,10 @@ const routesAdmin = [
     {path :'/editer-agent',component: EditAgent,props: route => ({ role: route.params.role })},
 ];
 
-const routesAgent = [
-    {path:'/validate-ticket',component:ValidateTicket},
-]
+
 const routes = [
     ...routesTicketDispenser,
     ...routesAdmin,
-    ...routesAgent,
     ...routesHome,
 ];
 

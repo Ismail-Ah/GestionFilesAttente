@@ -2,8 +2,8 @@
   <ReusableList
     title="Agents"
     fetchUrl="/agents"
-    :headers="['Nom', 'Email', 'Agence']"
-    :fields="['nom', 'agence.nom']"
+    :headers="['Nom', 'Email', 'Agence','Date de création']"
+    :fields="['nom','email', 'agence.nom']"
     cardClass="card card-warning"
     :data1="agents"
   />

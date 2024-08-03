@@ -12,7 +12,7 @@ use App\Http\Controllers\TicketDispenserController;
 
 // Routes for agencies
 Route::post('/agencies', [AgenceController::class, 'store'])->middleware('can:create,App\Models\Agence');
-Route::get('/agencies', [AgenceController::class, 'agencies']);
+Route::get('/agencies', [AgenceController::class, 'getAgences']);
 Route::get('/agences', [AgenceController::class, 'getAgences'])->middleware('can:viewAny,App\Models\Agence');
 Route::get('/agences/{agence}', [AgenceController::class, 'getAgence'])->middleware('can:view,agence');
 Route::delete('/agences/{agence}', [AgenceController::class, 'deleteAgence'])->middleware('can:delete,agence');
@@ -51,7 +51,7 @@ Route::get('/agents', [AgentController::class, 'getAgents'])->middleware(['auth'
 Route::delete('/agents/{agent}', [AgentController::class, 'deleteAgent'])->middleware(['auth', 'can:delete,agent']);
 Route::get('/service/{service}/agents', [AgentController::class, 'getServiceAgents'])->middleware(['auth', 'can:view,App\Models\Agent']);
 Route::get('/agence/{agence}/agents', [AgentController::class, 'getAgenceAgents'])->middleware(['auth', 'can:viewAny,App\Models\Agent']);
-Route::get('/edit/agents', [AgentController::class, 'getAgents2'])->middleware(['auth', 'can:viewAny,App\Models\Agent']);
+Route::get('/edit/agents', [AgentController::class, 'getAgents'])->middleware(['auth', 'can:viewAny,App\Models\Agent']);
 Route::post('/agents/{user}/update', [AgentController::class, 'updateAgent'])->middleware(['auth', 'can:update,user']);
 
 // Routes for statistics

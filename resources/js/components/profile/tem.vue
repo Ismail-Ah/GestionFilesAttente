@@ -19,7 +19,10 @@
                 <th></th>
               </tr>
             </thead>
-            <tbody>
+            <div v-if="loading">
+              <LoadingSpinner></LoadingSpinner>
+            </div>
+            <tbody v-else>
               <tr v-for="item in paginatedItems" :key="item.id">
                 <td v-for="field in fields" :key="field">{{ getItemField(item, field) || '-' }}</td>
                 <td>
@@ -112,7 +115,8 @@ export default {
       currentPage: 1,
       pageSize: 4,
       showOptions: {},
-      selectedEtatServices: {}, // Dictionary to store selected state for each service
+      selectedEtatServices: {}, 
+      loading:true,
     };
   },
   computed: {
@@ -162,6 +166,7 @@ export default {
           const { data } = await axios.get(url);
           this.items = data;
           this.initializeShowOptions();
+          this.loading=false;
         }
       } catch (error) {
         console.error('Failed to fetch items:', error);
