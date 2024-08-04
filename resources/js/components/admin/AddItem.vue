@@ -2,7 +2,7 @@
   <div class="card card-primary" style="margin-top: 20px">
     <div class="card-header">
       <h3 class="card-title">{{ title }}</h3>
-      <div v-if="title!='Ajouter un Service' && title!='Ajouter un Agence'" class="card-tools">
+      <div v-if="title !== 'Ajouter un Service' && title !== 'Ajouter un Agence'" class="card-tools">
         <button type="button" class="btn btn-tool btn-danger bg-danger" data-card-widget="collapse" @click="deleteItem">
           <i class="fas fa-trash"></i> Supprimer {{ name }}
         </button>
@@ -15,27 +15,40 @@
       </div>
 
       <div class="card-body">
-        <div v-for="input in inputs" :key="input.id" class="form-group">
-          <label :for="input.id">{{ input.label }}</label>
-          <div class="input-group">
-            <input
-              :class="['form-control', { 'arabic-input': input.id === 'nom_ar' && input.isArabic }]"
-              :type="input.type"
-              :id="input.id"
-              v-model="input.model"
-              :placeholder="input.id === 'nom_en' || input.id === 'nom_ar' ? '' : input.id"
-              :autocomplete="input.autocomplete"
-            />
-            <div v-if="input.id === 'nom_ar'" class="input-group-append">
-              <button class="btn btn-outline-secondary" type="button" @click="showArabicKeyboard">
-                <i class="fas fa-keyboard"></i>
-              </button>
+        <div class="form-row">
+          <div
+            v-for="input in inputs"
+            :key="input.id"
+            class="form-group"
+            :class="{'col-md-6': input.id === 'heure_debut' || input.id === 'heure_fin', 'col-md-12': input.id !== 'heure_debut' && input.id !== 'heure_fin'}"
+            :style="(input.id === 'heure_debut' || input.id === 'heure_fin') ? 'display: inline-block;' : ''"
+          >
+            <label :for="input.id">{{ input.label }}</label>
+            <div class="input-group">
+              <input
+                :class="['form-control', { 'arabic-input': input.id === 'nom_ar' && input.isArabic }]"
+                :type="input.type"
+                :id="input.id"
+                v-model="input.model"
+                :placeholder="input.id === 'nom_en' || input.id === 'nom_ar' ? '' : input.id"
+                :autocomplete="input.autocomplete"
+              />
+              <div v-if="input.id === 'nom_ar'" class="input-group-append">
+                <button class="btn btn-outline-secondary" type="button" @click="showArabicKeyboard">
+                  <i class="fas fa-keyboard"></i>
+                </button>
+              </div>
             </div>
           </div>
+          <div style="display: flex; justify-content: center; align-items: center; width:100%;height: 100%;">
+  <p v-if="errorMessage" style="color: red; text-align: center; margin: 0; padding: 10px;" class="alert shadow-sm">{{ errorMessage }}</p>
+</div>
+
         </div>
       </div>
 
       <div class="card-footer" style="display: flex; justify-content: center;">
+          
         <button type="submit" class="btn btn-primary">Submit</button>
       </div>
     </form>
@@ -92,15 +105,16 @@ export default {
       }, {});
       axios.post(this.action, data)
         .then(response => {
-          alert(response.data.message);
+          this.successMessage = response.data.message;
+          this.errorMessage = '';
           this.resetForm();
           this.$router.go(-1);
         })
         .catch(error => {
           if (error.response && error.response.data && error.response.data.errors) {
-            console.error('Validation errors:', error.response.data.errors);
+            this.errorMessage = Object.values(error.response.data.errors).flat().join(', ');
           } else {
-            console.error('Error updating service:', error.message);
+            this.errorMessage = error.message;
           }
         })
         .finally(() => {

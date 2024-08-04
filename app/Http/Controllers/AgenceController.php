@@ -17,16 +17,29 @@ class AgenceController extends Controller
     public function store(Request $request)
     {
         $validator = $this->validateAgence($request);
-
+    
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
-
+    
         $agency = Agence::create($request->only(['nom', 'email', 'adress', 'telephone']));
-
+    
         return response()->json(['message' => 'Agence ajoutée avec succès!', 'agency' => $agency], 201);
     }
-
+    
+    public function updateAgence(Request $request, Agence $agence)
+    {
+        $validator = $this->validateAgence($request, $agence->id);
+    
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+    
+        $agence->update($request->only(['nom', 'email', 'adress', 'telephone']));
+    
+        return response()->json(['message' => 'Agence modifiée avec succès!', 'agency' => $agence], 200);
+    }
+    
     public function getAgences()
     {
         return response()->json(Agence::all());
@@ -43,18 +56,7 @@ class AgenceController extends Controller
         return response()->json('Agence supprimée avec succès!');
     }
 
-    public function updateAgence(Request $request, Agence $agence)
-    {
-        $validator = $this->validateAgence($request, $agence->id);
-
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
-
-        $agence->update($request->only(['nom', 'email', 'adress', 'telephone']));
-
-        return response()->json(['message' => 'Agence modifiée avec succès!', 'agency' => $agence], 200);
-    }
+   
 
     public function showFormEditerAgence()
     {

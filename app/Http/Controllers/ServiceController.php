@@ -14,16 +14,33 @@ class ServiceController extends Controller
 {
     public function store(Request $request, Agence $agence)
     {
-        $this->validateService($request);
-
-        $service = $agence->services()->create($this->serviceData($request));
-        Files_Attente::create([
-            'nom' => "Service_File_D'Attente",
-            'service_id' => $service->id,
-        ]);
-
-        return response()->json(['message' => 'Service ajouté avec succès!', 'service' => $service], 201);
+        try {
+            $this->validateService($request);
+    
+            $service = $agence->services()->create($this->serviceData($request));
+            Files_Attente::create([
+                'nom' => "Fichier_Service_D'Attente",
+                'service_id' => $service->id,
+            ]);
+    
+            return response()->json(['message' => 'Service ajouté avec succès!', 'service' => $service], 201);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Erreur lors de l\'ajout du service: ' . $e->getMessage()], 500);
+        }
     }
+    
+    public function updateService(Request $request, Service $service)
+    {
+        try {
+            $this->validateService($request, $service->id);
+    
+            $service->update($this->serviceData($request));
+            return response()->json(['message' => 'Service modifié avec succès!', 'service' => $service], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Erreur lors de la modification du service: ' . $e->getMessage()], 500);
+        }
+    }
+    
 
     public function fetchServices()
     {
@@ -82,14 +99,7 @@ class ServiceController extends Controller
         return response()->json(['message' => 'Service supprimé avec succès!']);
     }
 
-    public function updateService(Request $request, Service $service)
-    {
-        $this->validateService($request, $service->id);
-
-        $service->update($this->serviceData($request));
-        return response()->json(['message' => 'Service modifié avec succès!', 'service' => $service], 200);
-    }
-
+   
     public function showFormAjouterService(Agence $agence)
     {
         return view('ajouter-service', ["role" => auth()->user()->role]);

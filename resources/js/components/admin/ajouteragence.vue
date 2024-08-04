@@ -1,5 +1,5 @@
 <template>
-  <PageContent :role="role">
+  <PageContent activeItem1="Agences" :role="role">
     <div class="wrapper">
       <div class="content-header">
         <div style="margin: auto;width: 50%;">

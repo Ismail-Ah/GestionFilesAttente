@@ -1,5 +1,5 @@
 <template>
-  <PageContent>
+  <PageContent activeItem1="Agents" :role="role">
     <div class="wrapper">
       <div class="content-header">
         <div style="margin: auto; width: 50%;">
@@ -42,8 +42,12 @@
                     class="custom-vue-select"
                   ></vue-select>
                 </div>
+                <div style="display: flex; justify-content: center; align-items: center; width:100%;height: 100%;">
+  <p v-if="errorMessage" style="color: red; text-align: center; margin: 0; padding: 10px;" class="alert shadow-sm">{{ errorMessage }}</p>
+</div>
               </div>
-              <div class="card-footer" style="display: flex; justify-content: center;">
+              <div class="card-footer" style="display: flex; flex-direction: column; align-items: center;">
+
                 <button type="submit" class="btn btn-primary">Submit</button>
               </div>
             </form>
@@ -64,6 +68,9 @@ import LoadingSpinner3 from '../LoadingSpinner3.vue'; // Import your spinner com
 export default {
   name: 'CreateAgentAcount',
   components: { PageContent, VueSelect, LoadingSpinner3 },
+  props:{
+    role:String,
+  },
   data() {
     return {
       nom: '',
@@ -73,7 +80,8 @@ export default {
       selectedServices: [],
       agencies: [],
       services: [],
-      loading: false // Track loading state
+      loading: false, // Track loading state
+      errorMessage: '' // Error message state
     };
   },
   methods: {
@@ -121,9 +129,9 @@ export default {
         })
         .catch(error => {
           if (error.response && error.response.data && error.response.data.errors) {
-            console.error('Validation errors:', error.response.data.errors);
+            this.errorMessage = Object.values(error.response.data.errors).flat().join(', ');
           } else {
-            console.error('Error updating service:', error.message);
+            this.errorMessage = error.message;
           }
         })
         .finally(() => {

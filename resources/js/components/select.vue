@@ -4,7 +4,7 @@
       <div class="row">
         <div :class="class_val">
           <div class="form-group">
-            <label>Select {{ itemType1 }}</label>
+            <label>Sélectionner {{ itemType1 }}</label>
             <div class="position-relative d-flex align-items-center">
               <select class="form-control" v-model="selectedItemType1" @change="fetchItem2">
                 <option value="">{{ itemType1 }}</option>

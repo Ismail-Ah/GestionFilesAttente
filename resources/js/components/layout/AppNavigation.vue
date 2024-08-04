@@ -134,6 +134,7 @@ export default {
   },
   props:{
     role:String,
+    activeItem1:String,
   },
   methods: {
     setActive(item) {
@@ -142,6 +143,7 @@ export default {
         if (item === 'ajouterAgent') {
           this.$router.push('/create-agent-acount');
         } else {
+          if (item!='Agences' && item!='Services' && item!='Agents' && item)
           this.$router.push(`/${item}`);
         }
       }
@@ -186,6 +188,11 @@ export default {
       });
 
       window.location.href = '/';
+    }
+  },
+  created(){
+    if (this.activeItem){
+      this.setActive(this.activeItem1);
     }
   }
 }

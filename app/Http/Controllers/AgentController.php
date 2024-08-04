@@ -12,16 +12,16 @@ use Illuminate\Support\Facades\Validator;
 class AgentController extends Controller
 {
     public function createAcount(Request $request) {
-        // Validate request data
+        // Valider les données de la requête
         $data = $request->validate([
             'nom' => ['required', 'string', 'min:3', 'max:100', 'unique:users,nom'],
             'email' => ['required', 'string', 'email', 'max:100', 'unique:users,email'],
             'password' => ['required', 'string', 'min:3'],
-            'service_ids' => ['nullable', 'array'], // Ensure it's an array
-            'service_ids.*' => ['integer', 'exists:services,id'], // Validate each ID in the array
+            'service_ids' => ['nullable', 'array'], // S'assurer que c'est un tableau
+            'service_ids.*' => ['integer', 'exists:services,id'], // Valider chaque ID dans le tableau
         ]);
     
-        // Create the agent
+        // Créer l'agent
         $agent = User::create([
             'nom' => $data['nom'],
             'email' => $data['email'],
@@ -29,7 +29,7 @@ class AgentController extends Controller
             'role' => 'AGENT',
         ]);
     
-        // Attach services to the agent
+        // Associer les services à l'agent
         if (isset($data['service_ids']) && is_array($data['service_ids'])) {
             foreach ($data['service_ids'] as $service_id) {
                 $service = Service::find($service_id);
@@ -40,8 +40,49 @@ class AgentController extends Controller
             }
         }
     
-        return response()->json("Agent added successfully", 201);
+        return response()->json("Agent ajouté avec succès", 201);
     }
+    
+    public function updateAgent(Request $request, User $user) {
+        // Valider les données de la requête
+        $data = $request->validate([
+            'nom' => ['required', 'string', 'min:3', 'max:100', Rule::unique('users', 'nom')->ignore($user->id)],
+            'email' => ['required', 'string', 'email', 'max:100', Rule::unique('users', 'email')->ignore($user->id)],
+            'service_ids' => ['nullable', 'array'], // S'assurer que service_ids est un tableau
+            'service_ids.*' => ['integer', 'exists:services,id'], // Valider chaque ID de service
+        ]);
+    
+        // Mettre à jour les détails de l'utilisateur
+        $user->update([
+            'nom' => $data['nom'],
+            'email' => $data['email'],
+        ]);
+    
+        // Détacher les services existants de l'utilisateur
+        $existingServices = $user->services->pluck('id')->toArray();
+        foreach ($existingServices as $serviceId) {
+            $service = Service::find($serviceId);
+            if ($service) {
+                $service->user_id = null;
+                $service->save();
+            }
+        }
+    
+        // Associer les nouveaux services à l'utilisateur
+        if (isset($data['service_ids']) && is_array($data['service_ids'])) {
+            foreach ($data['service_ids'] as $service_id) {
+                $service = Service::find($service_id);
+                if ($service) {
+                    $service->user_id = $user->id;
+                    $service->save();
+                }
+            }
+        }
+    
+        // Retourner une réponse de succès
+        return response()->json(['message' => 'Agent modifié avec succès!']);
+    }
+    
     
     public function getServices() {
         $services = Service::where('user_id', auth()->user()->id)->get();
@@ -91,44 +132,7 @@ class AgentController extends Controller
         return response()->json($service->agent());
     }
 
-    public function updateAgent(Request $request, User $user) {
-        // Validate request data
-        $data = $request->validate( [
-            'nom' => ['required', 'string', 'min:3', 'max:100', Rule::unique('users', 'nom')->ignore($user->id)],
-            'email' => ['required', 'string', 'email', 'max:100', Rule::unique('users', 'email')->ignore($user->id)],
-            'service_ids' => ['nullable', 'array'], // Ensure service_ids is an array
-            'service_ids.*' => ['integer', 'exists:services,id'], // Validate each service ID
-        ]);
-
-        // Update user details
-        $user->update([
-            'nom' => $data['nom'],
-            'email' => $data['email'],
-        ]);
     
-        $existingServices = $user->services->pluck('id')->toArray();
-        foreach ($existingServices as $serviceId) {
-            $service = Service::find($serviceId);
-            if ($service) {
-                $service->user_id = null;
-                
-                $service->save();
-            }
-        }
-        if (isset($data['service_ids']) && is_array($data['service_ids'])) {
-            foreach ($data['service_ids'] as $service_id) {
-                $service = Service::find($service_id);
-                if ($service) {
-                    $service->user_id = $user->id;
-                    $service->save();
-                }
-            }
-        }
-    
-    
-        // Return success response
-        return response()->json(['message' => 'Agent updated successfully!']);
-    }
     
 
     public function showFormAjouterAgent()

@@ -25,6 +25,11 @@ class HomeController extends Controller
         return $this->renderView('profile');
     }
 
+    public function liveQueue()
+    {
+        return view('liveQueue');
+    }
+
     public function liveSearch(Request $request)
     {
         try {

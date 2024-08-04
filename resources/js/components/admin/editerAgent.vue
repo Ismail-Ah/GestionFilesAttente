@@ -45,9 +45,13 @@
             :reduce="option => option.id"
           ></vue-select>
         </div>
+        <div style="display: flex; justify-content: center; align-items: center; width:100%;height: 100%;">
+  <p v-if="errorMessage" style="color: red; text-align: center; margin: 0; padding: 10px;" class="alert shadow-sm">{{ errorMessage }}</p>
+</div>
       </div>
 
-      <div class="card-footer" style="display: flex; justify-content: center;">
+      <div class="card-footer" style="display: flex; flex-direction: column; align-items: center;">
+
         <button type="submit" class="btn btn-primary">Submit</button>
       </div>
     </form>
@@ -77,7 +81,8 @@ export default {
       selectedServices: [],
       agencies: [],
       services: [],
-      loading: false // Track loading state
+      loading: false, // Track loading state
+      errorMessage: '' // Error message state
     };
   },
   watch: {
@@ -152,9 +157,9 @@ export default {
         })
         .catch(error => {
           if (error.response && error.response.status === 422) {
-            console.error('Validation errors:', error.response.data.errors);
+            this.errorMessage = Object.values(error.response.data.errors).flat().join(', ');
           } else {
-            console.error('Error updating agent:', error);
+            this.errorMessage = error.message;
           }
         })
         .finally(() => {

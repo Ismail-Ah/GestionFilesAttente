@@ -1,27 +1,63 @@
 <template>
-  <PageContent>
+  <PageContent activeItem1="Services" :role="role">
     <div class="wrapper">
+
+    <div v-if="!dashboard">
       <div class="content-header">
-        <div style="margin: auto;width: 50%;">
+      <div class="row">
+        <div class='col-sm-6 choix'>
+          <div class="form-group">
+            <label>Sélectionner Agence</label>
+            <div class="position-relative d-flex align-items-center">
+              <select class="form-control" v-model="selectedAgence" @change="fetchForm">
+                <option value="">Agence</option>
+                <option v-for="item in agences" :key="item.id" :value="item.id">
+                  {{ item.nom }} - {{ item.adress }}
+                </option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div v-if="showForm" style="margin: auto;width: 50%;">
+          
+          <AddItem
+            name="Service"
+            title="Ajouter un Service"
+            :inputs="inputs"
+            :action="`/agence/${this.selectedAgence}/ajouter-service`"
+          />
+        </div>
+    </div>
+        
+    </div>
+    <div v-else>
+      <div class="content-header">
+      <div style="margin: auto;width: 50%;">
           <AddItem
             name="Service"
             title="Ajouter un Service"
             :inputs="inputs"
             :action="`/agence/${this.$route.params.id}/ajouter-service`"
           />
-          <p class="optional-info">Les champs de traduction (Anglais et Arabe) sont optionnels.</p>
         </div>
       </div>
     </div>
+    </div>
+    
   </PageContent>
 </template>
 
 <script>
 import AddItem from './AddItem.vue';
 import PageContent from '../layout/PageContent.vue';
-
+import axios from 'axios';
 export default {
   name: 'ajouterService',
+  props:{
+    role:String,
+    dashboard:Boolean,
+  },
   components: {
     AddItem,
     PageContent,
@@ -76,8 +112,31 @@ export default {
           value: '',
         },
       ],
+      selectedAgence:'',
+      agences: [],
+      showForm:false,
     };
   },
+  methods:{
+    fetchItem1() {
+      axios.get(`/agencies`)
+        .then(response => {
+          this.agences = response.data;
+        })
+        .catch(error => {
+          console.error(`Error fetching ${this.itemType1.toLowerCase()}s:`, error);
+        });
+    },
+    fetchForm(){
+      this.showForm=true;
+    }
+  },
+  created(){
+    if(!this.dashboard){
+      this.fetchItem1();
+    }
+   
+  }
 };
 </script>
 

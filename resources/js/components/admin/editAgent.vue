@@ -1,5 +1,5 @@
 <template>
-    <PageContent>
+    <PageContent  activeItem1="Agents" :role="role">
       <Select itemType1="Agence" typeForm="agent" apiEndpoint1="agencies"  itemType3="Agent" apiEndpoint3="agents"  role="admin"  itemType2="Service"
   apiEndpoint2="services"/>
     </PageContent>
@@ -12,6 +12,9 @@
   
   export default {
     name:'EditAgent',
+    props:{
+      role:String,
+    },
     components:{Select,PageContent}
   }
   </script>

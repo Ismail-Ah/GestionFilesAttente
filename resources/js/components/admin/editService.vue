@@ -1,5 +1,5 @@
 <template>
-    <PageContent>
+    <PageContent  activeItem1="Services" :role="role">
         <Select
   itemType1="Agence"
   itemType2="Service"
@@ -21,6 +21,9 @@
     components: {
       Select,
       PageContent
+    },
+    props:{
+      role:String,
     },
   };
   </script>

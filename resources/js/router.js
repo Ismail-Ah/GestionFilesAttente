@@ -17,6 +17,7 @@ import EditService from './components/admin/editService.vue';
 import EditAgent from './components/admin/editAgent.vue';
 import LiveQueue from './components/queue/liveQueue.vue';
 import HomeQueue from './components/queue/home.vue';
+import UpdateProfileImage from './components/admin/updateImageProfile.vue';
 
 const routesTicketDispenser = [
     {path : '/ticket-dispenser',component:HomePage,props: route => ({ url:route.params.url||'/ticket-dispenser/' })},
@@ -29,13 +30,14 @@ const routesTicketDispenser = [
 ];
 
 const routesHome=[
-    { path: '/dashboard',name:'dashboard', component: Dashboard,props: route => ({ role: route.params.role,agence_id:route.params.agence_id||0,service_id:route.params.service_id||0 })},
-    { path: '/statistiques', component: Statistiques,props: route => ({ role: route.params.role })},
+    { path: '/dashboard',name:'dashboard', component: Dashboard,props: route => ({ activeItem1:"dashboard",role: route.params.role,agence_id:route.params.agence_id||0,service_id:route.params.service_id||0 })},
+    { path: '/statistiques', component: Statistiques,props: route => ({activeItem1:"statistiques", role: route.params.role })},
     {
         path: '/profile',
         name: 'profile',
         component: Profile,
         props: route => ({
+            activeItem1:"profile",
           role: route.params.role,
           profile_id: route.params.profile_id || 0 
         })
@@ -45,13 +47,15 @@ const routesHome=[
     ]
 
 const routesAdmin = [
-    { path: '/ajouter-agence', component: ajouterAgence,props: route => ({ role: route.params.role }) },
-    {path :'/agence/:id/ajouter-service',component: ajouterService,props: route => ({ role: route.params.role })},
+    { path: '/ajouter-agence', component: ajouterAgence,props: route => ({ activeItem1:"Agences",role: route.params.role }) },
+    {path :'/agence/:id/ajouter-service',component: ajouterService,props: route => ({activeItem1:"Services", role: route.params.role,dashboard:true })},
+    {path :'/ajouter-service',component: ajouterService,props: route => ({activeItem1:"Services", role: route.params.role,dashboard:false })},
     {path :'/agence/:id/ticket-dispenser',component: HomePage,props: route => ({ role: route.params.role })},
-    {path :'/ajouter-agent',component: CreateAgentAcount,props: route => ({ role: route.params.role })},
-    {path :'/editer-agence',component: EditAgence,props: route => ({ role: route.params.role })},
-    {path :'/editer-service',component: EditService,props: route => ({ role: route.params.role })},
-    {path :'/editer-agent',component: EditAgent,props: route => ({ role: route.params.role })},
+    {path :'/ajouter-agent',component: CreateAgentAcount,props: route => ({activeItem1:"Agents", role: route.params.role })},
+    {path :'/editer-agence',component: EditAgence,props: route => ({activeItem1:"Agences", role: route.params.role })},
+    {path :'/editer-service',component: EditService,props: route => ({activeItem1:"Services", role: route.params.role })},
+    {path :'/editer-agent',component: EditAgent,props: route => ({activeItem1:"Agents", role: route.params.role })},
+    {path :'/user/:id/update-image-profile',component: UpdateProfileImage,props: route => ({role: route.params.role })},
 ];
 
 

@@ -86,18 +86,22 @@ Route::get('/profile', [App\Http\Controllers\HomeController::class, 'profile'])-
 // Routes for Profile
 Route::get('/profile/user', [ProfileController::class, 'user'])->middleware('auth');
 Route::get('/profile/{user}', [ProfileController::class, 'user2'])->middleware(['auth', 'can:view,user']);
+Route::post('/user/{user}/update-profile-image', [ProfileController::class, 'updateProfileImage'])->middleware(['auth', 'can:update,user']);
+
+
 
 // Routes for agencies (additional routes)
 Route::get('/ajouter-agence', [AgenceController::class, 'showFormAjouterAgence'])->middleware(['auth', 'can:create,App\Models\Agence']);
 Route::get('/editer-agence', [AgenceController::class, 'showFormEditerAgence'])->middleware(['auth', 'can:update,App\Models\Agence']);
 
 // Routes for services (additional routes)
-Route::get('/agence/{agence}/ajouter-service', [ServiceController::class, 'showFormAjouterService'])->middleware(['auth', 'can:create,App\Models\Service']);
-Route::get('/editer-service', [ServiceController::class, 'showFormEditerService'])->middleware(['auth', 'can:update,App\Models\Service']);
+Route::get('/ajouter-service', [ServiceController::class, 'showFormAjouterService'])->middleware(['auth', 'can:create,App\Models\Service']);
+Route::get('/editer-service', [ServiceController::class, 'showFormEditerService'])->middleware(['auth', 'can:create,App\Models\Service']);
+Route::get('/agence/{agence}/editer-service', [ServiceController::class, 'showFormEditerService'])->middleware(['auth', 'can:create,App\Models\Service']);
 
 // Routes for agents (additional routes)
 Route::get('/ajouter-agent', [AgentController::class, 'showFormAjouterAgent'])->middleware(['auth', 'can:create,App\Models\User']);
-Route::get('/editer-agent', [AgentController::class, 'showFormEditerAgent'])->middleware(['auth', 'can:update,App\Models\User']);
+Route::get('/editer-agent', [AgentController::class, 'showFormEditerAgent'])->middleware(['auth', 'can:create,App\Models\User']);
 
 //search route
 Route::get('/live-search', [HomeController::class, 'liveSearch'])->name('liveSearch');
@@ -106,3 +110,6 @@ Route::get('/live-search', [HomeController::class, 'liveSearch'])->name('liveSea
 Route::get('/live-queue', [HomeController::class, 'liveQueue']);
 Route::get('/live-queue/agences/{agence}', [HomeController::class, 'homeQueue']);
 Route::get('/queue/agence/{agence}/services', [ServiceController::class, 'getServicesForQueue']);
+
+
+Route::get('/logo', [ProfileController::class, 'getLogo']);

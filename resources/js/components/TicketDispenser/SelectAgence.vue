@@ -1,7 +1,7 @@
 <template>
   <div style="display: flex; flex-direction: column; align-items: center; margin-top: -5%; width: 100%;">
     <h1 class="title">Select Agence</h1>
-    <div v-if="loading">
+    <div v-if="loading" style="margin-top: -10%;">
       <LoadingSpinner></LoadingSpinner>
     </div>
     <div v-else class="home-page">
@@ -25,7 +25,7 @@
       </div>
       <div class="pagination">
         <button @click="prevPage" id="previous" :disabled="currentPage === 1"><i class="fas fa-arrow-left"></i></button>
-        <button @click="nextPage" id="next" :disabled="currentPage === totalPages"><i class="fas fa-arrow-right"></i></button>
+        <button @click="nextPage" id="next" :disabled="currentPage >= totalPages"><i class="fas fa-arrow-right"></i></button>
       </div>
     </div>
   </div>

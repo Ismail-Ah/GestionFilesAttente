@@ -1,53 +1,55 @@
 <template>
-  <div>
-    <PageContent :role="role">
-      <div class="wrapper">
-        <div class="content-header">
-          <div class="row">
-            <i class="nav-icon fas fa-cog" style="display:flex;justify-content: flex-end;"></i>
-            <div class="col-sm-6 choix">
-              <div class="form-group">
-                <label>Select Agence</label>
-                <div class="position-relative d-flex align-items-center">
-                  <select class="form-control" v-model="selectedAgence" @change="fetchServices">
-                    <option value="">Agence</option>
-                    <option v-for="agence in agencies" :key="agence.id" :value="agence.id">{{ agence.nom }} - {{ agence.adress }}</option>
-                  </select>
-                  <div v-if="role != 'AGENT'" class="btn-group btn-group-sm ml-1 add-agence-indicator">
-                    <button type="button" class="btn btn-info" @click="$router.push('ajouter-agence')">
-                      <i class="fas fa-plus"></i>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="col-sm-6 choix">
-              <div class="form-group">
-                <label>Select Service</label>
-                <div class="position-relative d-flex align-items-center">
-                  <select class="form-control" :disabled="!selectedAgence" v-model="selectedService">
-                    <option value="">Service</option>
-                    <option v-for="service in services" :key="service.id" :value="service.id">{{ service.nom }}</option>
-                  </select>
-                  <div v-if="role != 'AGENT'" class="btn-group btn-group-sm ml-1 add-agence-indicator">
-                    <button type="button" class="btn btn-info" :disabled="!selectedAgence" @click="$router.push(`/agence/${selectedAgence}/ajouter-service`)">
-                      <i class="fas fa-plus"></i>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <section class="content">
-          <div class="container-fluid">
-            <StatBox :name="name" :name_id="name_id"></StatBox>
-            <StatTickets :name="name" :name_id="name_id"></StatTickets>
-          </div>
-        </section>
-      </div>
-    </PageContent>
-  </div>
+  <div v-if="loading1">
+         <LoadingSpinner></LoadingSpinner>
+       </div>
+ <div v-else>
+   <PageContent activeItem1="dashboard" :role="role">
+     <div class="wrapper">
+       <div class="content-header">
+         <div class="row">
+           <div class="col-sm-6 choix">
+             <div class="form-group">
+               <label>Sélectionner Agence</label>
+               <div class="position-relative d-flex align-items-center">
+                 <select class="form-control" v-model="selectedAgence" @change="fetchServices">
+                   <option value="">Agence</option>
+                   <option v-for="agence in agencies" :key="agence.id" :value="agence.id">{{ agence.nom }} - {{ agence.adress }}</option>
+                 </select>
+                 <div v-if="role != 'AGENT'" class="btn-group btn-group-sm ml-1 add-agence-indicator">
+                   <button type="button" class="btn btn-info" @click="$router.push('ajouter-agence')">
+                     <i class="fas fa-plus"></i>
+                   </button>
+                 </div>
+               </div>
+             </div>
+           </div>
+           <div class="col-sm-6 choix">
+             <div class="form-group">
+               <label>Sélectionner Service</label>
+               <div class="position-relative d-flex align-items-center">
+                 <select class="form-control" :disabled="!selectedAgence" v-model="selectedService">
+                   <option value="">Service</option>
+                   <option v-for="service in services" :key="service.id" :value="service.id">{{ service.nom }}</option>
+                 </select>
+                 <div v-if="role != 'AGENT'" class="btn-group btn-group-sm ml-1 add-agence-indicator">
+                   <button type="button" class="btn btn-info" :disabled="!selectedAgence" @click="$router.push(`/agence/${selectedAgence}/ajouter-service`)">
+                     <i class="fas fa-plus"></i>
+                   </button>
+                 </div>
+               </div>
+             </div>
+           </div>
+         </div>
+       </div>
+       <section class="content">
+         <div class="container-fluid">
+           <StatBox :name="name" :name_id="name_id"></StatBox>
+           <StatTickets :name="name" :name_id="name_id"></StatTickets>
+         </div>
+       </section>
+     </div>
+   </PageContent>
+ </div>
 </template>
 
 <script>
@@ -57,10 +59,11 @@ import axios from 'axios';
 import StatTickets from './StatTickets.vue';
 import VueSelect from 'vue-select';
 import 'vue-select/dist/vue-select.css';
+import LoadingSpinner from '../LoadingSpinner.vue';
 
 export default {
   name: 'Dashboard',
-  components: { PageContent, StatBox, StatTickets, VueSelect },
+  components: { PageContent, StatBox, StatTickets, VueSelect,LoadingSpinner },
   props: {
     role: {
       type: String,
@@ -84,6 +87,7 @@ export default {
       agencies: [],
       services: [],
       loading: true,
+      loading1:true,
     };
   },
   methods: {
@@ -95,8 +99,8 @@ export default {
       })
         .then(response => {
           this.agencies = response.data;
-          this.loading = false;
           this.initializeSelections();
+          this.loading = false;
         })
         .catch(error => {
           console.error('Error fetching agencies:', error);
@@ -126,6 +130,9 @@ export default {
         this.fetchServices(); // Fetch services based on the selected agency
       }
      
+    },
+    fetchLoading1(){
+      this.loading1=false;
     }
   },
   watch: {
@@ -153,10 +160,18 @@ export default {
           this.name_id = '';
         }
       }
+    },
+    role(newValue){
+      if(newValue){
+        this.fetchLoading1();
+      }
     }
   },
   created() {
     this.fetchAgencies();
+    if (this.role){
+      this.fetchLoading1();
+    }
   },
 };
 </script>

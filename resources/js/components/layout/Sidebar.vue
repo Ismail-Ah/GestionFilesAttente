@@ -1,32 +1,57 @@
 <template>
   <aside :class="['main-sidebar', 'sidebar-dark-primary', 'elevation-4', 'position-fixed', { 'sidebar-collapse': isCollapsed }]">
-    <a href="index3.html" class="brand-link">
-      <img src="img/redal.png" alt="Redal Logo" class="brand-image elevation-3" style="opacity: .8; margin:auto">
-      <span class="brand-text font-weight-light" style="margin-left:10px">Redal</span>
-    </a>
-
     <div class="sidebar">
       <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+        <div class="image">
+          <img :src="`/storage/profile_images/${profileImage}`" class="img-circle elevation-2" alt="User Image">
+        </div>
         <div class="info">
-          <a href="#" class="d-block">ISMAIL AHAKAY</a>
+          <a href="#" style="margin-left:5%" class="d-block">ISMAIL AHAKAY</a>
         </div>
       </div>
-      <AppNavigation :role="role" />
+      <AppNavigation :role="role" :activeItem1="activeItem1 || ''" />
     </div>
   </aside>
 </template>
 
 <script>
 import AppNavigation from './AppNavigation.vue';
+import axios from 'axios';
 
 export default {
   name: 'Sidebar',
   components: {
     AppNavigation,
   },
+  data() {
+    return {
+      profileImage: 'default_logo.png',
+    };
+  },
+  methods: {
+    fetchLogoUser() {
+      // Check if the profile image is already cached
+      const cachedProfileImage = localStorage.getItem('profileImage');
+      if (cachedProfileImage) {
+        this.profileImage = cachedProfileImage;
+      } else {
+        // Fetch the profile image from the server and cache it
+        axios.get('/logo').then(response => {
+          this.profileImage = response.data;
+          localStorage.setItem('profileImage', response.data);
+        }).catch(error => {
+          console.error('Error fetching profile image:', error);
+        });
+      }
+    },
+  },
+  created() {
+    this.fetchLogoUser();
+  },
   props: {
     role: String,
     isCollapsed: Boolean,
+    activeItem1: String,
   },
 };
 </script>

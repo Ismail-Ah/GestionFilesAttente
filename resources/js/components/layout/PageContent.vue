@@ -2,8 +2,8 @@
   <div :class="['hold-transition', 'sidebar-mini', 'layout-fixed', { 'sidebar-collapse': isSidebarCollapsed }]">
     <div class="wrapper">
       <AppLayout />
-      <Navbar @toggle-sidebar="toggleSidebar" @search-results="handleSearchResults"/>
-      <Sidebar :role="role" :isCollapsed="isSidebarCollapsed" />
+      <Navbar @toggle-sidebar="toggleSidebar" @search-results="handleSearchResults"  />
+      <Sidebar :role="role" :isCollapsed="isSidebarCollapsed" :activeItem1="activeItem1" />
       <div class="content-wrapper">
         <section class="content">
           <!-- Conditional rendering based on the presence of search results -->
@@ -40,7 +40,8 @@ export default {
     role: {
       type: String,
       required: true
-    }
+    },
+    activeItem1:String,
   },
   data() {
     return {
