@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('files_attentes', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->string('nom');
             $table->foreignId('service_id')->unique()->constrained()->onDelete('cascade');
             $table->integer('ClientsEnAttentes')->default(0);
             $table->integer('ClientsTraites')->default(0);

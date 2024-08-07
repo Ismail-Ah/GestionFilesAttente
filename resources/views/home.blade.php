@@ -1,4 +1,4 @@
-<x-layout2>
+<x-layout2 action="">
 
 
     <header id="header" class="header" >
@@ -29,7 +29,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-12">
-                    <div class="above-heading"><h1 style="color: #5f4def">DESCRIPTION</h1></div>
+                    <div class="above-heading"><h1 style="color: #FB8500">DESCRIPTION</h1></div>
                     <h2 class="h2-heading">Gestion de File d'Attente Simplifiée</h2>
                 </div> <!-- end of col -->
             </div> <!-- end of row -->
@@ -70,8 +70,8 @@
                             <img class="img-fluid" src="img/stat.png" alt="Statistiques et Rapports" style=" height: 200px;">
                         </div>
                         <div class="card-body">
-                            <h4 class="card-title">Statistiques et Rapports</h4>
-                            <p>Générez des statistiques détaillées et des rapports pour analyser le flux de clients et améliorer l'efficacité.</p>
+                            <h4 class="card-title">Statistiques</h4>
+                            <p>Générez des statistiques détaillées pour analyser le flux de clients et améliorer l'efficacité.</p>
                         </div>
                     </div>
                     <!-- end of card -->
@@ -90,7 +90,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-12">
-                    <div class="above-heading"><h1 style="color: #5f4def">Services</h1></div>
+                    <div class="above-heading"><h1 style="color: #FB8500">Services</h1></div>
                     <h2 class="h2-heading">Gestion de File d'Attente</h2>
                     <p class="p-heading">Améliorez l'efficacité de votre gestion de file d'attente avec nos services dédiés pour répondre aux besoins de vos clients.</p>
                 </div> <!-- end of col -->

@@ -6,23 +6,13 @@
     <title>Queue Management</title>
     <?php echo app('Illuminate\Foundation\Vite')(['resources/js/app.js', 'resources/sass/app.scss']); ?>
     <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
-
-        <!-- Include jQuery -->
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simple-keyboard/build/css/index.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simple-keyboard/build/css/index.css" />
 <script src="https://cdn.jsdelivr.net/npm/simple-keyboard/build/index.js"></script>
 
 
       
 </head>
 <body>
-    <div class="spinner-wrapper">
-        <div class="spinner">
-            <div class="bounce1"></div>
-            <div class="bounce2"></div>
-            <div class="bounce3"></div>
-        </div>
-    </div>
     <header id="header" class="header">
         <div class="header-content">
     <div id="app">
@@ -31,4 +21,4 @@
         </div>
     </header>
 </body>
-</html><?php /**PATH D:\Documents\stage\project\resources\views/dashboard.blade.php ENDPATH**/ ?>
+</html><?php /**PATH D:\Documents\stage\project\resources\views/editer-service.blade.php ENDPATH**/ ?>

@@ -66,12 +66,16 @@
                     </li>
 
                 </ul>
+                @if ($action!='login')
                 <span class="nav-item">
-                    <a class="btn-outline-sm" href="/login">LOG IN</a>
+                    <a class="btn-outline-sm" href="/login">Se Connecter</a>
                 </span>
+                @endif
+                @if ($action!='register')
                 <span class="nav-item">
                     <a class="btn-outline-sm" href="/register">S'inscrire</a>
                 </span>
+                @endif
             </div>
         </div> <!-- end of container -->
     </nav> <!-- end of navbar -->

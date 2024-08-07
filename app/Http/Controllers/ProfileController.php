@@ -56,7 +56,7 @@ class ProfileController extends Controller
             $user->save();
         }
 
-        return response()->json(['message' => 'Image de profil mise à jour avec succès!']);
+        return response()->json(['message' => 'Image de profil mise à jour avec succès!',"profile_image"=>$uniqueFileName]);
     } catch (\Exception $e) {
         return response()->json(['error' => 'Erreur lors de la mise à jour de l\'image de profil: ' . $e->getMessage()], 500);
     }

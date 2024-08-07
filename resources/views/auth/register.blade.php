@@ -1,4 +1,4 @@
-<x-layout2>
+<x-layout2 action="register">
     <style>
         body {
             background-image: url('/img/blob2.svg');

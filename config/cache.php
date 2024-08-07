@@ -15,7 +15,8 @@ return [
     |
     */
 
-    'default' => env('CACHE_STORE', 'database'),
+'default' => env('CACHE_DRIVER', 'file'),
+    
 
     /*
     |--------------------------------------------------------------------------
@@ -71,11 +72,11 @@ return [
             ],
         ],
 
-        'redis' => [
+       /* 'redis' => [
             'driver' => 'redis',
             'connection' => env('REDIS_CACHE_CONNECTION', 'cache'),
             'lock_connection' => env('REDIS_CACHE_LOCK_CONNECTION', 'default'),
-        ],
+        ],*/
 
         'dynamodb' => [
             'driver' => 'dynamodb',
@@ -106,6 +107,6 @@ return [
     'prefix' => env('CACHE_PREFIX', Str::slug(env('APP_NAME', 'laravel'), '_').'_cache_'),
     
  
-    'limiter' => 'redis',
+   /* 'limiter' => 'redis',*/
 
 ];

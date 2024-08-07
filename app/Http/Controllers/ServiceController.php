@@ -19,7 +19,6 @@ class ServiceController extends Controller
     
             $service = $agence->services()->create($this->serviceData($request));
             Files_Attente::create([
-                'nom' => "Fichier_Service_D'Attente",
                 'service_id' => $service->id,
             ]);
     
@@ -128,13 +127,13 @@ class ServiceController extends Controller
             'nom' => [
                 'required',
                 'string',
-                'max:255',
+                'max:500',
                 Rule::unique('services')->ignore($ignoreId),
             ],
             'heure_debut' => 'required|date_format:H:i',
             'heure_fin' => 'required|date_format:H:i',
-            'nom_en' => 'nullable|string|max:255',
-            'nom_ar' => 'nullable|string|max:255',
+            'nom_en' => 'nullable|string|max:500',
+            'nom_ar' => 'nullable|string|max:500',
         ])->validate();
     }
 

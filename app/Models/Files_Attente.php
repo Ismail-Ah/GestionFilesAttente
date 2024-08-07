@@ -11,7 +11,7 @@ class Files_Attente extends Model
     protected $table = 'files_attentes'; // Specify the table name if different from the default (optional)
 
     protected $fillable = [
-        'nom', 'service_id', 'tempsMoyenEnAttente',
+        'service_id', 'tempsMoyenEnAttente',
     ];
     public function tickets(){
         return $this->hasMany(Ticket::class,"files_attente_id");

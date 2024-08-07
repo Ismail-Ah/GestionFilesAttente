@@ -1,13 +1,13 @@
 <?php if (isset($component)) { $__componentOriginalc5aa37dc5fe6d26bb482e7431ed136b9 = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginalc5aa37dc5fe6d26bb482e7431ed136b9 = $attributes; } ?>
-<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.layout2','data' => []] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.layout2','data' => ['action' => 'login']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
 <?php $component->withName('layout2'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
 <?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
 <?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
 <?php endif; ?>
-<?php $component->withAttributes([]); ?>
+<?php $component->withAttributes(['action' => 'login']); ?>
     <style>
         body {
             background-image: url('/img/blob2.svg');
@@ -61,7 +61,7 @@
             <div class="row justify-content-center">
                 <div class="col-md-7">
                     <div class="card">
-                        <div class="card-header"><?php echo e(__('Login')); ?></div>
+                        <div class="card-header"><?php echo e(__('Se Connecter')); ?></div>
 
                         <div class="card-body">
                             <form method="POST" action="<?php echo e(route('login')); ?>">
@@ -123,32 +123,21 @@ unset($__errorArgs, $__bag); ?>
                                     </div>
                                 </div>
         
-                                <div class="row mb-3">
-                                    <div class="col-md-6 offset-md-4">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="remember" id="remember" <?php echo e(old('remember') ? 'checked' : ''); ?>>
-        
-                                            <label class="form-check-label" for="remember">
-                                                <?php echo e(__('Remember Me')); ?>
-
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
+                               
         
                                 <div class="row mb-0">
                                     <div class="col-md-8 offset-md-4">
                                         <button type="submit" class="btn btn-primary">
-                                            <?php echo e(__('Login')); ?>
+                                            <?php echo e(__('Se Connecter')); ?>
 
                                         </button>
         
-                                        <?php if(Route::has('password.request')): ?>
-                                            <a class="btn btn-link" href="<?php echo e(route('password.request')); ?>">
-                                                <?php echo e(__('Forgot Your Password?')); ?>
+                                        
+                                            <a class="btn btn-link" href="<?php echo e(route('register')); ?>">
+                                                <?php echo e(__('J\'ai pas un compte?')); ?>
 
                                             </a>
-                                        <?php endif; ?>
+                                        
                                     </div>
                                 </div>
                             </form>
@@ -170,5 +159,4 @@ unset($__errorArgs, $__bag); ?>
 <?php if (isset($__componentOriginalc5aa37dc5fe6d26bb482e7431ed136b9)): ?>
 <?php $component = $__componentOriginalc5aa37dc5fe6d26bb482e7431ed136b9; ?>
 <?php unset($__componentOriginalc5aa37dc5fe6d26bb482e7431ed136b9); ?>
-<?php endif; ?>
-z<?php /**PATH D:\Documents\stage\project\resources\views/auth/login.blade.php ENDPATH**/ ?>
+<?php endif; ?><?php /**PATH D:\Documents\stage\project\resources\views/auth/login.blade.php ENDPATH**/ ?>

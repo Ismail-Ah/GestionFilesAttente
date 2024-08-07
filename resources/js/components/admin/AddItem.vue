@@ -107,7 +107,7 @@ export default {
         .then(response => {
           this.successMessage = response.data.message;
           this.errorMessage = '';
-          this.resetForm();
+          alert(`${this.name} a été ajouté avec succès!`);
           this.$router.go(-1);
         })
         .catch(error => {
@@ -125,8 +125,8 @@ export default {
       let id = this.id_item;
       let choix = confirm(`Tapez ok pour supprimer cette ${this.name} ?`);
       if (choix) {
-        let url = 'api/agences';
-        if (this.name === 'Service') url = 'api/services';
+        let url = '/agences';
+        if (this.name === 'Service') url = '/services';
         axios.delete(`${url}/${id}`).then(response => {
           console.log("L'élément a été supprimé");
           this.$router.go(-1);

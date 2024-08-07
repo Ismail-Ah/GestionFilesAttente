@@ -35,7 +35,7 @@ class AgenceController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
     
-        $agence->update($request->only(['nom', 'email', 'adress', 'telephone']));
+        $agence->update($request->only(['nom', 'email', 'adress', 'telephone','nom_ar']));
     
         return response()->json(['message' => 'Agence modifiée avec succès!', 'agency' => $agence], 200);
     }
@@ -69,6 +69,7 @@ class AgenceController extends Controller
             'nom' => 'required|string|max:255',
             'email' => 'required|email',
             'adress' => 'required|string|max:255',
+            'nom_ar' => 'nullable|string|max:255',
             'telephone' => [
                 'required',
                 'string',

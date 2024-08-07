@@ -1,13 +1,13 @@
 <?php if (isset($component)) { $__componentOriginalc5aa37dc5fe6d26bb482e7431ed136b9 = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginalc5aa37dc5fe6d26bb482e7431ed136b9 = $attributes; } ?>
-<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.layout2','data' => []] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.layout2','data' => ['action' => '']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
 <?php $component->withName('layout2'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
 <?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
 <?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
 <?php endif; ?>
-<?php $component->withAttributes([]); ?>
+<?php $component->withAttributes(['action' => '']); ?>
 
 
     <header id="header" class="header" >
@@ -38,7 +38,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-12">
-                    <div class="above-heading"><h1 style="color: #5f4def">DESCRIPTION</h1></div>
+                    <div class="above-heading"><h1 style="color: #FB8500">DESCRIPTION</h1></div>
                     <h2 class="h2-heading">Gestion de File d'Attente Simplifiée</h2>
                 </div> <!-- end of col -->
             </div> <!-- end of row -->
@@ -79,8 +79,8 @@
                             <img class="img-fluid" src="img/stat.png" alt="Statistiques et Rapports" style=" height: 200px;">
                         </div>
                         <div class="card-body">
-                            <h4 class="card-title">Statistiques et Rapports</h4>
-                            <p>Générez des statistiques détaillées et des rapports pour analyser le flux de clients et améliorer l'efficacité.</p>
+                            <h4 class="card-title">Statistiques</h4>
+                            <p>Générez des statistiques détaillées pour analyser le flux de clients et améliorer l'efficacité.</p>
                         </div>
                     </div>
                     <!-- end of card -->
@@ -99,7 +99,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-12">
-                    <div class="above-heading"><h1 style="color: #5f4def">Services</h1></div>
+                    <div class="above-heading"><h1 style="color: #FB8500">Services</h1></div>
                     <h2 class="h2-heading">Gestion de File d'Attente</h2>
                     <p class="p-heading">Améliorez l'efficacité de votre gestion de file d'attente avec nos services dédiés pour répondre aux besoins de vos clients.</p>
                 </div> <!-- end of col -->

@@ -11,7 +11,7 @@ class Service extends Model
     protected $table = 'services'; // Specify the table name if different from the default (optional)
 
     protected $fillable = [
-        'nom', 'etat', 'agence_id','heure_fin','heure_debut','nom_en','nom_ar'
+        'nom', 'etat', 'agence_id','heure_fin','heure_debut','nom_en','nom_ar',
     ];
 
     public function agence(){

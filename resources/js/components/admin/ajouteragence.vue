@@ -31,6 +31,15 @@ export default {
     return {
       inputs: [
         { tagName:'input', label: 'Nom de l\'agence', id: 'nom', model: '', type: 'text', autocomplete: 'organization', value: '' },
+        {
+          tagName: 'input',
+          label: 'Nom de l\'Agence (Arabic) (Optionnel)',
+          id: 'nom_ar',
+          model: '',
+          type: 'text',
+          autocomplete: 'organization',
+          value: '',
+        },
         { tagName:'input',label: 'Email de l\'agence', id: 'email', model: '', type: 'email', autocomplete: 'email', value: '' },
         { tagName:'input',label: 'Emplacement', id: 'adress', model: '', type: 'text', autocomplete: 'address', value: '' },
         { tagName:'input',label: 'Téléphone de l\'agence', id: 'telephone', model: '', type: 'text', autocomplete: 'tel', value: '' }

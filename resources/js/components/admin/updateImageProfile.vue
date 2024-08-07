@@ -73,7 +73,7 @@ export default {
       })
         .then(response => {
           alert('L\'image de profil a été mise à jour avec succès!');
-          this.image = null; // Effacer le champ de fichier
+          localStorage.setItem('profileImage', response.data.profile_image);          
           this.$router.push('/profile');
         })
         .catch(error => {
