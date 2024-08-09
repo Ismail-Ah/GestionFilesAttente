@@ -7,6 +7,8 @@
   apiEndpoint2="services"
   typeForm="service"
   role="admin"
+  :agenceSelect="agence"
+  :serviceSelect="service"
 />
 
     </PageContent>
@@ -24,6 +26,8 @@
     },
     props:{
       role:String,
+      agence:[Number,String],
+      service:[Number,String]
     },
   };
   </script>

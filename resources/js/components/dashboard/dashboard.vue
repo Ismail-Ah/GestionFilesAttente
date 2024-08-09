@@ -13,7 +13,7 @@
                <div class="position-relative d-flex align-items-center">
                  <select class="form-control" v-model="selectedAgence" @change="fetchServices">
                    <option value="">Agence</option>
-                   <option v-for="agence in agencies" :key="agence.id" :value="agence.id">{{ agence.nom }} - {{ agence.adress }}</option>
+                   <option v-for="agence in agencies" :key="agence.id" :value="agence.id">Ag{{agence.id}} | {{ agence.nom }} - {{ agence.adress }}</option>
                  </select>
                  <div v-if="role != 'AGENT'" class="btn-group btn-group-sm ml-1 add-agence-indicator">
                    <button type="button" class="btn btn-info" @click="$router.push('ajouter-agence')">
@@ -29,7 +29,7 @@
                <div class="position-relative d-flex align-items-center">
                  <select class="form-control" :disabled="!selectedAgence" v-model="selectedService">
                    <option value="">Service</option>
-                   <option v-for="service in services" :key="service.id" :value="service.id">{{ service.nom }}</option>
+                   <option v-for="service in services" :key="service.id" :value="service.id">S{{service.id}} | {{ service.nom }}</option>
                  </select>
                  <div v-if="role != 'AGENT'" class="btn-group btn-group-sm ml-1 add-agence-indicator">
                    <button type="button" class="btn btn-info" :disabled="!selectedAgence" @click="$router.push(`/agence/${selectedAgence}/ajouter-service`)">
@@ -92,6 +92,12 @@ export default {
   },
   methods: {
     fetchAgencies() {
+      const cachedAgences = localStorage.getItem('Agences');
+      if (cachedAgences) {
+        this.agencies = JSON.parse(cachedAgences);
+        this.initializeSelections();
+        this.loading = false;
+      } else {
       axios.get('/agencies', {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -99,31 +105,39 @@ export default {
       })
         .then(response => {
           this.agencies = response.data;
+          localStorage.setItem('Agences', JSON.stringify(response.data));
           this.initializeSelections();
           this.loading = false;
         })
         .catch(error => {
           console.error('Error fetching agencies:', error);
         });
-    },
-    fetchServices() {
-      if (this.selectedAgence) {
-        axios.get(`/agence/${this.selectedAgence}/services`)
-          .then(response => {
-            this.services = response.data;
-            if (this.service_id) {
-              this.selectedService = this.service_id;
-            } else {
-              this.selectedService = null;
-            }
-          })
-          .catch(error => {
-            console.error('Error fetching services:', error);
-          });
-      } else {
-        this.services = [];
       }
-    },
+      },
+      async fetchServices() {
+  if (this.selectedAgence) {
+    try {
+      const cachedServices = localStorage.getItem(`Agence${this.selectedAgence}Services`);
+      if (cachedServices) {
+        this.services = JSON.parse(cachedServices);
+        this.selectedService = this.service_id || '';
+      } else {
+        const response = await axios.get(`/agence/${this.selectedAgence}/services`);
+        this.services = response.data;
+        localStorage.setItem(`Agence${this.selectedAgence}Services`, JSON.stringify(this.services));
+        this.selectedService = this.service_id || '';
+      }
+    } catch (error) {
+      console.error('Error fetching services:', error);
+      this.services = []; // Ensure services is cleared on error
+      this.selectedService = ''; // Ensure selected service is cleared on error
+    }
+  } else {
+    this.services = [];
+    this.selectedService = null;
+  }
+}
+,
     initializeSelections() {
       if (this.agence_id) {
         this.selectedAgence = this.agence_id;
@@ -138,11 +152,13 @@ export default {
   watch: {
     selectedAgence(newValue) {
       if (newValue) {
+        this.selectedService='';
         this.name = 'agence';
         this.name_id = newValue;
         this.fetchServices();
       } else {
         this.name = 'agencies';
+        this.selectedService='';
         this.name_id = '';
         this.services = [];
       }

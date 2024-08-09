@@ -86,7 +86,7 @@
             <a @click="toggleAgent" :class="{'nav-link': true, 'active': activeItem === 'Agents'}">
               <i class="fas fa-user nav-icon"></i>
               <p>
-                Agents
+                Utilisateurs
                 <i class="right fas fa-angle-left"></i>
               </p>
             </a>
@@ -94,13 +94,13 @@
               <li class="nav-item">
                 <a @click="redirect('ajouter-agent')" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
-                  <p>Ajouter Agent</p>
+                  <p>Ajouter Utilisateur</p>
                 </a>
               </li>
               <li class="nav-item">
                 <a @click="redirect('editer-agent')" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
-                  <p>Edit Agent</p>
+                  <p>Edit Utilisateur</p>
                 </a>
               </li>
             </ul>

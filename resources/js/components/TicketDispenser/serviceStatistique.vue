@@ -7,7 +7,10 @@
       
       <button class="btn-solid-lg page-scroll quiter"  @click="prendreTicket(false)">{{$t('Quiter')}}</button>
       <BackButton class="back-button"></BackButton>
-      <button class="btn-solid-lg page-scroll" style="background-color: #FB8500;border-color: #FB8500;"  @click="prendreTicket(true)">{{$t('prendreTicket')}}</button>
+      <button class="btn-solid-lg page-scroll" style="background-color: #FB8500;border-color: #FB8500;font-size: 1.6rem; /* Slightly larger for emphasis */
+  line-height: 1.4;
+  font-weight: 700;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);"  @click="prendreTicket(true)">{{$t('prendreTicket')}}</button>
     </div>
     </div>
  

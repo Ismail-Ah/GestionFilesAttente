@@ -1,6 +1,6 @@
 <template>
   <PageContent  activeItem1="Agences" :role="role">
-    <Select itemType1="Agence" typeForm="agence" apiEndpoint1="agencies" role="admin"/>
+    <Select itemType1="Agence" typeForm="agence" apiEndpoint1="agencies" role="admin" :agenceSelect="agence"/>
   </PageContent>
 </template>
 
@@ -13,6 +13,7 @@ export default {
   name:'EditAgence',
   props:{
     role:String,
+    agence:[Number,String],
   },
   components:{Select,PageContent}
 }

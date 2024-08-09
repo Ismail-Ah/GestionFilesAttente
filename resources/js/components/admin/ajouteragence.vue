@@ -45,6 +45,11 @@ export default {
         { tagName:'input',label: 'Téléphone de l\'agence', id: 'telephone', model: '', type: 'text', autocomplete: 'tel', value: '' }
       ]
     };
+  },
+  created(){
+    localStorage.removeItem(`agences`);
+    localStorage.removeItem(`Agences`);
+
   }
 };
 </script>

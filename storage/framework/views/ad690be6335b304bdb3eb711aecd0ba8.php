@@ -21,7 +21,9 @@
             padding: 0;
         }
     </style>
-
+    <script>
+        localStorage.clear();
+    </script>
     
     <svg viewBox="0 0 1356 200" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path fill="rgba(2, 48, 71, 1)" d="M 0 0 C 344.5 0 344.5 110 689 110 L 689 110 L 689 0 L 0 0 Z" stroke-width="0"></path> <path fill="rgba(2, 48, 71, 1)" d="M 688 110 C 1022 110 1022 0 1356 0 L 1356 0 L 1356 0 L 688 0 Z" stroke-width="0"></path> </svg>
             <div class="container d-flex justify-content-center">

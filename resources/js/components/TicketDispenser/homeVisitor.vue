@@ -16,7 +16,7 @@
       <button @click="selectLanguage('ar')" class="btn-solid-lg page-scroll">
         <div class="text-container">
           <h1 class="text-top">مرحبا بكم في</h1>
-          <h1 class="text-bottom">{{ agence.nom }}</h1>
+          <h1 class="text-bottom">{{ agence.nom_ar?agence.nom_ar:agence.nom }}</h1>
         </div>
       </button>
     </div>
@@ -39,17 +39,25 @@ export default {
     };
   },
   methods: {
-    getAgencies() {
-      axios.get(`/agences/${this.$route.params.id}`)
-        .then(response => {
+    async getAgencies() {
+      try {
+        const cachedAgencies = localStorage.getItem(`agence${this.$route.params.id}`);
+        if (cachedAgencies) {
+          this.agence = JSON.parse(cachedAgencies);
+        } else {
+          const response = await axios.get(`/agences/${this.$route.params.id}`);
           this.agence = response.data;
-          this.loading = false;
-        })
-        .catch(error => {
-          console.error('Erreur lors de la récupération des agences:', error);
-        });
+          localStorage.setItem(`agence${this.$route.params.id}`, JSON.stringify(this.agence));
+        }
+      } catch (error) {
+        console.error('Erreur lors de la récupération des agences:', error);
+        this.agence = ''; // Ensure agencies is cleared on error
+      } finally {
+        this.loading = false;
+      }
     },
   },
+
   created() {
     this.getAgencies();
   },
@@ -71,6 +79,7 @@ export default {
 </script>
 
 <style scoped>
+
 .language-selection {
   text-align: center;
   margin: 20px;
@@ -85,25 +94,25 @@ export default {
 .btn-solid-lg {
   width: 400px; /* Set explicit width */
   height: 200px; /* Set explicit height */
-  border: 0.125rem solid #023047;
-  border-radius: 1rem;
+  border: 2px solid #023047;
+  border-radius: 10px;
   background-color: #023047;
   color: #fff;
-  font: 700 1rem / 1 "Open Sans", sans-serif;
+  font-family: 'Roboto', sans-serif; /* Using a web font for better typography */
+  font-weight: 700;
+  font-size: 1.2rem;
   text-decoration: none;
-  box-shadow: 0px 0px 5px 1px rgba(2,48,71,1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   display: flex;
   justify-content: center;
   align-items: center;
-  transition: all 0.2s;
+  transition: all 0.3s ease;
   margin-top: 20px;
   padding: 0; /* Remove default padding */
 }
 
 .btn-solid-lg.page-scroll:hover {
-  background-color: #fff;
-  border-color: #023047;
-  color: #023047;
+  border-color: #FB8500;
 }
 
 .text-container {
@@ -114,15 +123,29 @@ export default {
   height: 100%; /* Make container fill button height */
   width: 100%; /* Make container fill button width */
   text-align: center;
+  color: #FB8500;
 }
 
 .text-top, .text-bottom {
   margin: 0;
-  font-size: 1.5rem;
-  line-height: 1.2;
+  font-family: 'Roboto', sans-serif; /* Ensure consistent font family */
 }
 
 .text-top {
-  margin-bottom: 10px; /* Space between top and bottom text */
+  font-size: 1.6rem; /* Slightly larger for emphasis */
+  line-height: 1.4;
+  margin-bottom: 0.5rem; /* Space between top and bottom text */
+  font-weight: 700;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* Add text shadow for better readability */
 }
+
+.text-bottom {
+  color : white;
+  font-size: 1.6rem; /* Slightly larger for emphasis */
+  line-height: 1.4;
+  font-weight: 700;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* Add text shadow for better readability */
+}
+
+
 </style>

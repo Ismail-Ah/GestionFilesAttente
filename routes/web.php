@@ -19,13 +19,13 @@ Route::get('/agencies', [AgenceController::class, 'getAgences']);
 Route::middleware(['auth', 'can:viewAny,App\Models\Agence'])->group(function () {
     Route::get('/agences', [AgenceController::class, 'getAgences']);
 });
-Route::middleware(['auth', 'can:view,agence'])->group(function () {
-    Route::get('/agences/{agence}', [AgenceController::class, 'getAgence']);
-});
+
+
+Route::get('/agences/{agence}', [AgenceController::class, 'getAgence']);
 Route::middleware(['auth', 'can:delete,agence'])->group(function () {
     Route::delete('/agences/{agence}', [AgenceController::class, 'deleteAgence']);
 });
-Route::middleware(['auth', 'can:update,agence'])->group(function () {
+Route::middleware(['auth', 'can:create,App\Models\Agence'])->group(function () {
     Route::post('/agencies/{agence}/update', [AgenceController::class, 'updateAgence']);
     Route::get('/editer-agence', [AgenceController::class, 'showFormEditerAgence']);
 });
@@ -40,9 +40,10 @@ Route::middleware(['auth', 'can:create,App\Models\Service'])->group(function () 
 });
 Route::get('/agence/{agence}/services', [ServiceController::class, 'getServices2']);
 Route::middleware(['auth', 'can:view,service'])->group(function () {
-    Route::get('/service/{service}', [ServiceController::class, 'serviceInfo']);
+    
     Route::get('/edit-agent/services', [ServiceController::class, 'getServices2']);
 });
+Route::get('/service/{service}', [ServiceController::class, 'serviceInfo']);
 Route::middleware(['auth', 'can:viewAny,App\Models\Service'])->group(function () {
     Route::get('/services', [ServiceController::class, 'getServices']);
     Route::get('/services/{user}', [ServiceController::class, 'getServicesOfAgent']);
@@ -56,7 +57,7 @@ Route::middleware(['auth', 'can:update,service'])->group(function () {
 });
 
 // Routes for tickets
-Route::middleware(['auth', 'can:prendreTicket,service'])->group(function () {
+Route::middleware(['can:prendreTicket,service'])->group(function () {
     Route::post('/agence/{agence}/ticket-dispenser/services/{service}/ticket', [TicketController::class, 'createTicket']);
     Route::get('/agence/{agence}/ticket-dispenser/services/{service}', [TicketDispenserController::class, 'showTDStatistiques']);
     Route::get('/agence/{agence}/ticket-dispenser/services/{service}/ticket', [TicketDispenserController::class, 'showTDTicket']);
@@ -115,6 +116,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/user/{user}/update-profile-image', [ProfileController::class, 'updateProfileImage'])->middleware('can:update,user');
 });
 Route::get('/logo', [ProfileController::class, 'getLogo']);
+Route::get('/nom', [ProfileController::class, 'getNom']);
 
 // Auth routes
 Auth::routes();

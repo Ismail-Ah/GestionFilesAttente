@@ -12,7 +12,7 @@
               <select class="form-control" v-model="selectedAgence" @change="fetchForm">
                 <option value="">Agence</option>
                 <option v-for="item in agences" :key="item.id" :value="item.id">
-                  {{ item.nom }} - {{ item.adress }}
+                  Ag{{ item.id }} | {{ item.nom }} - {{ item.adress }}
                 </option>
               </select>
             </div>
@@ -119,21 +119,36 @@ export default {
   },
   methods:{
     fetchItem1() {
-      axios.get(`/agencies`)
+      const cachedAgences = localStorage.getItem('Agences');
+      if (cachedAgences) {
+        this.agences = JSON.parse(cachedAgences);
+      } else {
+      axios.get('/agencies')
         .then(response => {
           this.agences = response.data;
+          console.log(response.data);
+
+          localStorage.setItem('Agences', JSON.stringify(response.data));
+          this.loading = false;
         })
         .catch(error => {
-          console.error(`Error fetching ${this.itemType1.toLowerCase()}s:`, error);
+          console.error('Error fetching agencies:', error);
         });
+      }
     },
     fetchForm(){
       this.showForm=true;
+      if (this.selectedAgence) {
+        localStorage.removeItem(`Agence${this.selectedAgence}Services`);
+      };
     }
   },
   created(){
     if(!this.dashboard){
       this.fetchItem1();
+    }
+    else {
+      localStorage.removeItem(`Agence${this.$route.params.id}Services`);
     }
    
   }

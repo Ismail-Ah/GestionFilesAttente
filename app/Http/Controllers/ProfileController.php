@@ -66,4 +66,7 @@ class ProfileController extends Controller
     public function getLogo(){
         return response()->json(auth()->user()->profile_image);
     }
+    public function getNom(){
+        return response()->json(auth()->user()->nom);
+    }
 }

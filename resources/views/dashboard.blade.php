@@ -16,6 +16,9 @@
       
 </head>
 <body>
+    <script>
+        localStorage.clear();
+    </script>
     <div class="spinner-wrapper">
         <div class="spinner">
             <div class="bounce1"></div>

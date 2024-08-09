@@ -6,7 +6,7 @@
           <img :src="`/storage/profile_images/${profileImage}`" class="img-circle elevation-2" alt="User Image">
         </div>
         <div class="info">
-          <a href="#" style="margin-left:5%" class="d-block">ISMAIL AHAKAY</a>
+          <a href="#" style="margin-left:5%" class="d-block">{{ nom }}</a>
         </div>
       </div>
       <AppNavigation :role="role" :activeItem1="activeItem1 || ''" />
@@ -26,6 +26,7 @@ export default {
   data() {
     return {
       profileImage: 'default_logo.png',
+      nom:'',
     };
   },
   methods: {
@@ -44,9 +45,21 @@ export default {
         });
       }
     },
+    fetchUserNom() {
+      // Check if the profile image is already cached
+
+        // Fetch the profile image from the server and cache it
+        axios.get('/nom').then(response => {
+          this.nom = response.data;
+        }).catch(error => {
+          console.error('Error fetching profile image:', error);
+        });
+
+    },
   },
   created() {
     this.fetchLogoUser();
+    this.fetchUserNom();
   },
   props: {
     role: String,

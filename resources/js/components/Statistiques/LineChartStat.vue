@@ -53,43 +53,38 @@
     </div>
 
     <div style="display: flex;">
-      <div class="card card-primary card-outline" style="width: 600px; height: 350px;">
+      <div class="card card-primary card-outline" style="width: 600px;" :style="!ShowList1 ? {height: '50px'} : { height: '350px' }">
         <div class="card-header">
           <h3 class="card-title">
             <i class="far fa-chart-bar"></i>
             Total des Clients au Fil du Temps
           </h3>
           <div class="card-tools">
-            <button type="button" class="btn btn-tool" data-card-widget="collapse">
-              <i class="fas fa-minus"></i>
-            </button>
-            <button type="button" class="btn btn-tool" data-card-widget="remove">
-              <i class="fas fa-times"></i>
+            <button type="button" class="btn btn-tool" data-card-widget="collapse" @click="toggleShowList(1)">
+              <i :class="ShowList1 ? 'fas fa-minus' : 'fas fa-plus'"></i>
             </button>
           </div>
         </div>
-        <div class="card-body">
+        <div class="card-body" v-if="ShowList1">
           <div id="line-chart" style="height: 300px; padding: 0px; position: relative;">
             <canvas id="myChart" style="width: 100%; max-width: 500px;"></canvas>
           </div>
         </div>
       </div>
-      <div class="card card-primary card-outline" style="width: 600px; margin-left: 20px; height: 350px;">
+      <div class="card card-primary card-outline" style="width: 600px; margin-left: 20px;" :style="!ShowList2 ? {height: '50px'} : { height: '350px' }">
         <div class="card-header">
           <h3 class="card-title">
             <i class="far fa-chart-bar"></i>
             Clients Servis vs. Clients Non Servis
           </h3>
           <div class="card-tools">
-            <button type="button" class="btn btn-tool" data-card-widget="collapse">
-              <i class="fas fa-minus"></i>
-            </button>
-            <button type="button" class="btn btn-tool" data-card-widget="remove">
-              <i class="fas fa-times"></i>
-            </button>
+            <button type="button" class="btn btn-tool" data-card-widget="collapse" @click="toggleShowList(2)">
+          <i :class="ShowList2 ? 'fas fa-minus' : 'fas fa-plus'"></i>
+        </button>
+            
           </div>
         </div>
-        <div class="card-body">
+        <div class="card-body" v-if="ShowList2">
           <div id="line-chart" style="height: 300px; padding: 0px; position: relative;">
             <canvas id="myChart2" style="width: 100%; max-width: 500px;"></canvas>
           </div>
@@ -98,42 +93,38 @@
     </div>
 
     <div style="display: flex;">
-      <div class="card card-primary card-outline" style="width: 600px; height: 350px;">
+      <div class="card card-primary card-outline" style="width: 600px;" :style="!ShowList3 ? {height: '50px'} : { height: '350px' }">
         <div class="card-header">
           <h3 class="card-title">
             <i class="far fa-chart-bar"></i>
             Temps Moyen d'Attente
           </h3>
           <div class="card-tools">
-            <button type="button" class="btn btn-tool" data-card-widget="collapse">
-              <i class="fas fa-minus"></i>
-            </button>
-            <button type="button" class="btn btn-tool" data-card-widget="remove">
-              <i class="fas fa-times"></i>
-            </button>
+            <button type="button" class="btn btn-tool" data-card-widget="collapse" @click="toggleShowList(3)">
+          <i :class="ShowList3 ? 'fas fa-minus' : 'fas fa-plus'"></i>
+        </button>
+           
           </div>
         </div>
-        <div class="card-body">
+        <div class="card-body" v-if="ShowList3">
           <div id="line-chart" style="height: 300px; padding: 0px; position: relative;">
             <canvas id="myChart3" style="width: 100%; max-width: 500px;"></canvas>
           </div>
         </div>
       </div>
-      <div class="card card-primary card-outline" style="width: 600px; margin-left: 20px; height: 350px;">
+      <div class="card card-primary card-outline" style="width: 600px; margin-left: 20px;" :style="!ShowList4 ? {height: '50px'} : { height: '350px' }">
         <div class="card-header">
           <h3 class="card-title">
             <i class="far fa-chart-bar"></i>
             Taux de Service Client          </h3>
           <div class="card-tools">
-            <button type="button" class="btn btn-tool" data-card-widget="collapse">
-              <i class="fas fa-minus"></i>
-            </button>
-            <button type="button" class="btn btn-tool" data-card-widget="remove">
-              <i class="fas fa-times"></i>
-            </button>
+            <button type="button" class="btn btn-tool" data-card-widget="collapse" @click="toggleShowList(4)">
+          <i :class="ShowList4 ? 'fas fa-minus' : 'fas fa-plus'"></i>
+        </button>
+           
           </div>
         </div>
-        <div class="card-body">
+        <div class="card-body" v-if="ShowList4">
           <div id="line-chart" style="height: 300px; padding: 0px; position: relative;">
             <canvas id="myChart4" style="width: 100%; max-width: 500px;"></canvas>
           </div>
@@ -153,6 +144,10 @@ export default {
   name: 'LineChartStat',
   data() {
     return {
+      ShowList1:true,
+      ShowList2:true,
+      ShowList3:true,
+      ShowList4:true,
       dataset: [0, 0, 0, 0, 0, 0, 0, 0],
       myChart: null,
       myChart2: null,
@@ -168,6 +163,12 @@ export default {
     timeFilter: Number,
   },
   methods: {
+    toggleShowList(n) {
+      if(n==1){this.ShowList1 = !this.ShowList1;}
+      else if(n==2){this.ShowList2 = !this.ShowList2;}
+      else if(n==3){this.ShowList3 = !this.ShowList3;}
+      else  this.ShowList4 = !this.ShowList4;
+    },
     async getStatistiques() {
       try {
         let response;
@@ -231,7 +232,7 @@ export default {
           labels: xValues,
           datasets: [{
             data: this.dataset[3],
-            borderColor: "blue",
+            borderColor: "orange",
             fill: false,
             label: "Temps Moyen d'attente",
           }]
@@ -288,12 +289,13 @@ export default {
       };
     },
     getXAxisTitle() {
-      if (this.timeFilter === 1) return 'Hours';
-      if (this.timeFilter === 365) return 'Last 12 Months';
-      if (this.timeFilter === 30) return 'Last 30 Days';
-      if (this.timeFilter === 7) return 'Last 7 Days';
-      return '';
-    },
+  if (this.timeFilter === 1) return 'Heures';
+  if (this.timeFilter === 365) return 'Les 12 derniers mois';
+  if (this.timeFilter === 30) return 'Les 30 derniers jours';
+  if (this.timeFilter === 7) return 'Les 7 derniers jours';
+  return '';
+},
+
     formatTime(heure) {
       const heures = parseInt(heure);
       const remainingMinutes = (heure - heures) * 60;
@@ -302,7 +304,7 @@ export default {
   },
   mounted() {
     this.getStatistiques();
-    this.updateInterval = setInterval(this.getStatistiques, 10000);
+    this.updateInterval = setInterval(this.getStatistiques, 20000);
   },
   beforeDestroy() {
     clearInterval(this.updateInterval);

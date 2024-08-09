@@ -14,19 +14,16 @@
             <a @click.prevent="getFilterTickets('TRAITE')" href="#" class="dropdown-item">Tickets traités</a>
           </div>
         </div>
-        <button type="button" class="btn btn-tool" data-card-widget="collapse">
-          <i class="fas fa-minus"></i>
-        </button>
-        <button type="button" class="btn btn-tool" data-card-widget="remove">
-          <i class="fas fa-times"></i>
+        <button type="button" class="btn btn-tool" data-card-widget="collapse" @click="toggleShowList">
+          <i :class="ShowList ? 'fas fa-minus' : 'fas fa-plus'"></i>
         </button>
       </div>
     </div>
     <div v-if="loading">
     <LoadingSpinner2></LoadingSpinner2>
   </div>
-    <div v-else class="card-body p-0">
-      <div class="table-responsive">
+    <div v-else  class="card-body p-0">
+      <div v-if="ShowList" class="table-responsive">
         <table class="table m-0">
           <thead>
             <tr>
@@ -40,7 +37,7 @@
           </thead>
           <tbody>
             <tr v-for="ticket in paginatedTickets" :key="ticket.id">
-              <td><strong>{{ ticket.numéro }}</strong></td>
+              <td style="text-align: center;font-size: 20px"><strong>{{ ticket.numéro }}</strong></td>
               <td>{{ ticket.nom_agence }}</td>
               <td>{{ ticket.service.nom }}</td>
               <td>
@@ -64,7 +61,7 @@
         </table>
       </div>
     </div>
-    <div class="card-footer clearfix">
+    <div v-if="ShowList" class="card-footer clearfix">
       <button class="btn btn-sm btn-success float-left" @click="prevPage" :disabled="currentPage === 1">Précédent</button>
       <button class="btn btn-sm btn-success float-right" @click="nextPage" :disabled="currentPage >= totalPages">Suivant</button>
     </div>
@@ -83,6 +80,7 @@ export default {
   components: { LoadingSpinner2 },
   data() {
     return {
+      ShowList: true,
       tickets: [],
       allTickets: [],
       currentPage: 1,
@@ -106,6 +104,9 @@ export default {
     },
   },
   methods: {
+    toggleShowList() {
+      this.ShowList = !this.ShowList;
+    },
     toggleFilters() {
       this.showFilters = !this.showFilters;
     },
@@ -122,16 +123,19 @@ export default {
         if (this.name === "service") {
           this.isActif = this.allTickets[0]?.service.etat === 'ACTIF';
         }
-        this.getFilterTickets(this.typeFilter);
+        this.getFilterTickets(this.typeFilter,0);
         this.loading = false;
       } catch (error) {
         console.error('Erreur lors de la récupération des tickets:', error);
         this.loading = false;
       }
     },
-    getFilterTickets(type) {
+    getFilterTickets(type,ref=1) {
       this.tickets = type ? this.allTickets.filter(ticket => ticket.statut === type) : this.allTickets;
       this.showFilters = false;
+      if(ref){
+        this.currentPage= 1;
+      }
       this.typeFilter = type;
     },
     async validateTicket(id) {
@@ -188,6 +192,12 @@ export default {
   watch: {
     name: 'getTickets',
     name_id: 'getTickets',
+    name(newValue){
+      this.currentPage= 1;
+    },
+    name_id(newValue){
+      this.currentPage= 1;
+    }
   },
   created() {
     this.getTickets();
@@ -200,24 +210,13 @@ export default {
 </script>
 
 
-
 <style scoped>
+/* Ensures that table cells display text in a single line and handle overflow with ellipsis */
 
-
-
-
-
-.project-actions a {
-  margin-right: 10px;
-}
 
 button:disabled {
   background-color: grey;
   cursor: not-allowed;
   border: grey;
 }
-
-
-
-
 </style>

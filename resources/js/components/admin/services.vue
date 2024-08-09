@@ -1,5 +1,5 @@
 <template>
-  <div v-if="loading">
+  <div v-if="loading" style="margin-top: -10%;">
     <LoadingSpinner></LoadingSpinner>
   </div>
   <div v-else class="home-page">
@@ -7,13 +7,14 @@
       <button
         v-for="service in paginatedServices"
         :key="service.id"
-        :disabled="service.etat !== 'ACTIF'"
+        :disabled="service.etat0 !== 'ACTIF'"
         class="btn-solid-lg page-scroll"
         @click="clickService(service.id, action)"
+        ref="serviceButtons"
       >
-        <h4>{{ service.nom }}</h4>
-        <p class="agency-details" :style="{ color: service.etat === 'ACTIF' ? 'rgb(8, 235, 8)' : 'red' }">
-          {{ service.etat }}
+        <h4>{{ langauge==='fr'?service.nom:langauge==='en'?(service.nom_en?service.nom_en:service.nom):(service.nom_ar?service.nom_ar:service.nom) }}</h4>
+        <p v-if="service.etat0!='ACTIF'" class="agency-details" :style="{ color: service.etat0 === 'ACTIF' ? 'rgb(8, 235, 8)' : 'red' }" :class="{'active': service.etat0 === 'ACTIF'}">
+          {{ service.etat0 }}
         </p>
       </button>
       <button
@@ -21,6 +22,7 @@
         :key="'placeholder-' + placeholder"
         class="btn-solid-lg page-scroll placeholder"
         disabled
+        ref="serviceButtons"
       >
         Placeholder
       </button>
@@ -57,6 +59,7 @@ export default {
   props: {
     id: String,
     action: String,
+    langauge:String,
   },
   computed: {
     totalPages() {
@@ -74,24 +77,72 @@ export default {
     },
   },
   methods: {
+    extractTime(date) {
+  const hours = date.getHours().toString().padStart(2, '0');
+  const minutes = date.getMinutes().toString().padStart(2, '0');
+  const seconds = date.getSeconds().toString().padStart(2, '0');
+  return `${hours}:${minutes}:${seconds}`;
+},
     getServices() {
-      axios.get(`/agence/${this.id}/services`)
-        .then(response => {
-          this.services = response.data.map(service => {
-            const currentTime = new Date().toLocaleTimeString('it-IT');
-            if (currentTime < service.heure_debut && service.etat==='ACTIF') {
-              service.etat = `Commence à ${service.heure_debut}`;
-            } else if (currentTime > service.heure_fin && service.etat==='ACTIF') {
-              service.etat = `Terminé à ${service.heure_fin}`;
-            }
-            return service;
-          });
-          this.loading = false; // Stop loading when data is fetched
-        })
-        .catch(error => {
-          console.error('Erreur lors de la récupération des services:', error);
+  const cachedServices = localStorage.getItem(`Agence${this.id}Services`);
+
+  const formatTime = (timeString) => {
+    const [hours, minutes, seconds] = timeString.split(':').map(Number);
+    return new Date(0, 0, 0, hours, minutes, seconds);
+  };
+
+  const isServiceActive = (currentTime, startTime, endTime) => {
+    // If endTime is less than startTime, the service ends the next day
+    if (endTime < startTime) {
+      return (currentTime >= startTime) || (currentTime <= endTime);
+    }
+    return (currentTime >= startTime) && (currentTime <= endTime);
+  };
+
+  const checkAndUpdateServiceState = (service, currentTime) => {
+    const startTime = this.extractTime(formatTime(service.heure_debut));
+    const endTime = this.extractTime(formatTime(service.heure_fin));
+    currentTime = this.extractTime(currentTime);
+    service.etat0 = service.etat;
+    console.log("currentTime : ",currentTime);
+    console.log("startTime : ",startTime);
+    console.log("endTime : ",endTime);
+    console.log("-----------------------");
+    if (currentTime < startTime && service.etat === 'ACTIF') {
+      service.etat0 = `${this.$t('commence')}  ${service.heure_debut}`;
+    } else if (!isServiceActive(currentTime, startTime, endTime) && service.etat === 'ACTIF') {
+      service.etat0 = `${this.$t('termine')} ${service.heure_fin}`;
+    }
+    return service;
+  };
+
+  if (cachedServices) {
+    const currentTime = new Date();
+    this.services = JSON.parse(cachedServices);
+    this.services.forEach(service => {
+      checkAndUpdateServiceState(service, currentTime);
+    });
+    this.loading = false; // Stop loading if data is fetched from localStorage
+    this.$nextTick(() => this.setMaxButtonHeight());
+  } else {
+    axios.get(`/agence/${this.id}/services`)
+      .then(response => {
+        const currentTime = new Date();
+        this.services = response.data;
+        this.services.forEach(service => {
+          checkAndUpdateServiceState(service, currentTime);
         });
-    },
+        localStorage.setItem(`Agence${this.id}Services`, JSON.stringify(this.services));
+        this.loading = false; // Stop loading when data is fetched
+        this.$nextTick(() => this.setMaxButtonHeight());
+      })
+      .catch(error => {
+        console.error('Erreur lors de la récupération des services:', error);
+      });
+  }
+},
+
+
     clickService(id, action) {
       if (action === 'ticket') {
         this.$router.push(`/agence/${this.$route.params.id}/ticket-dispenser/services/${parseInt(id)}`);
@@ -101,18 +152,41 @@ export default {
       if (this.currentPage < this.totalPages) {
         this.currentPage++;
       }
+      this.$nextTick(() => this.setMaxButtonHeight());
     },
     prevPage() {
       if (this.currentPage > 1) {
         this.currentPage--;
       }
+      this.$nextTick(() => this.setMaxButtonHeight());
     },
+    setMaxButtonHeight() {
+      const buttons = this.$refs.serviceButtons;
+      if (buttons.length > 0) {
+        let maxHeight = 0;
+        buttons.forEach(button => {
+          const height = button.clientHeight;
+          if (height > maxHeight) {
+            maxHeight = height;
+          }
+        });
+        buttons.forEach(button => {
+          button.style.height = `${maxHeight}px`;
+        });
+      }
+    }
   },
   created() {
     this.getServices();
+    if (!this.langauge){
+      this.langauge='fr';
+    }
   },
+
 };
 </script>
+
+
 
 <style scoped>
 :root {
@@ -156,14 +230,16 @@ export default {
 .btn-solid-lg {
   flex: 1 1 calc(50% - 10px); /* Two items per row, minus gap */
   box-sizing: border-box; /* Include padding and border in width calculation */
-  margin: 10px 0; /* Vertical margin */
+  margin: 5px 0; /* Vertical margin */
   padding: 20px;
   border-radius: 10px 0 10px 0;
   width: 90%; /* Full width within the flex item */
   height: 25%; /* Set explicit height */
   display: flex; /* Flex display */
-  align-items: center; /* Center text vertically */
-  justify-content: center; /* Center text horizontally */
+  flex-direction: column; /* Arrange children in a column */
+  justify-content: space-between; /* Space between elements */
+  align-items: center; /* Center text horizontally */
+  position: relative;
 }
 
 .btn-solid-lg {
@@ -178,21 +254,32 @@ export default {
   box-shadow: 0px 0px 5px 1px rgba(2,48,71,1);
   transition: all 0.2s;
   text-align: center;
+  
 }
 
 .btn-solid-lg.page-scroll:hover {
-  background-color: #fff;
-  border-color: #023047;
-  color: #023047;
+  border-color: #FB8500;
+  color: #FB8500;
 }
 
 .pagination {
+  top: 85%;
   display: flex;
   justify-content: space-between;
   align-items: center;
   width: 100%;
   max-width: 600px;
   margin-top: 20px;
+}
+.pagination #next{
+  position:fixed;
+  top:88%;
+  right:28.5%;
+}
+.pagination #previous{
+  position:fixed;
+  top:88%;
+  left:28.5%;
 }
 
 .pagination button {
@@ -217,12 +304,13 @@ button:disabled {
 button:disabled:hover {
   background-color: grey; /* Keep the background color the same */
   border: grey; /* Keep the border color the same */
+  
 }
 
 .btn-solid-lg.page-scroll:disabled:hover {
   background-color: grey;
   border-color: grey;
-  color: #fff;
+  color:white;
 }
 
 .placeholder {
@@ -236,6 +324,27 @@ button:disabled:hover {
 }
 
 .agency-details {
-  margin: 0.25rem 0;
+  margin:auto;
+  background-color: #023047;
+  color: white;
+  padding: 5px;
+  width: 100%;
+  padding:1%;
+  text-align: center;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  border-radius:0 0  1rem 1rem;
+}
+
+
+.services button {
+  max-height: 130px;
+}
+h4{
+  font-size: 1.2rem; /* Slightly larger for emphasis */
+  line-height: 1.4;
+  font-weight: 700;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* Add text shadow for better readability */
 }
 </style>

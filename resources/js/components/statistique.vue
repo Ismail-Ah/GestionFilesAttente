@@ -1,12 +1,12 @@
 <template>
   <div class="statistics">
-    <div v-if="loading">
+    <div v-if="loading" style="margin-top: -100%">
       <LoadingSpinner /> <!-- Display spinner when loading -->
     </div>
     <div class="stats" v-else>
       <div class="stat btn-solid-lg page-scroll">
         <div class="stat-text">
-          <h2>Clients en Attente</h2>
+          <h2>{{ $t('CA') }}</h2>
         </div>
         <div class="stat-data">
           <p>{{ clientsEnAttente }}</p>
@@ -14,7 +14,7 @@
       </div>
       <div class="stat btn-solid-lg page-scroll">
         <div class="stat-text">
-          <h2>Temps Moyen d'Attente</h2>
+          <h2>{{ $t('TMA') }}</h2>
         </div>
         <div class="stat-data">
           <p>{{ formatTime(tempsMoyenAttente) }}</p>

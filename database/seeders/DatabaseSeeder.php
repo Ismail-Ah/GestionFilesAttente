@@ -3,8 +3,9 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class DatabaseSeeder extends Seeder
 {
@@ -13,11 +14,25 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+    
+        
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        // Seed files_attentes
+        $serviceIds = [9, 10, 11, 12, 13, 14, 15, 17];
+
+        foreach ($serviceIds as $serviceId) {
+            for ($i = 0; $i < 30; $i++) {
+                $createdAt = Carbon::now()->subDays($i)->toDateTimeString();
+
+                DB::table('files_attentes')->insert([
+                    'service_id' => $serviceId,
+                    'ClientsEnAttentes' => rand(0, 100),
+                    'ClientsTraites' => rand(0, 100),
+                    'tempsMoyenAttente' => rand(5, 60),
+                    'created_at' => $createdAt,
+                    'updated_at' => $createdAt,
+                ]);
+            }
+        }
     }
 }

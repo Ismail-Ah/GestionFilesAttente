@@ -5,5 +5,10 @@
     "StatistiquesService": "Statistiques du service",
     "Quiter": "Quitter",
     "prendreTicket": "Prendre une ticket",
-    "Instructions": "Veuillez conserver ce ticket jusqu'à votre tour"
+    "Instructions": "Veuillez conserver ce ticket jusqu'à votre tour",
+    "commence":"Commence à ",
+    "termine":"Terminé à ",
+    "TMA":"Temps Moyen d'Attente",
+    "CA":"Clients en Attente",
+    "Service":"Service"
 }

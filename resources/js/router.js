@@ -21,7 +21,7 @@ import UpdateProfileImage from './components/admin/updateImageProfile.vue';
 
 const routesTicketDispenser = [
     {path : '/ticket-dispenser',component:HomePage,props: route => ({ url:route.params.url||'/ticket-dispenser/' })},
-    {path : '/ticket-dispenser/agences',name:'ticketDispenserAgences',component:SelectAgence,props: route => ({ url:route.params.url||'/ticket-dispenser/' })},
+    {path : '/ticket-dispenser/agences',name:'ticketDispenserAgences',component:SelectAgence,props: route => ({ url:route.params.url||'/ticket-dispenser/'})},
     { path: '/ticket-dispenser/agences/:id', component: HomeVisitor },
     { path: '/agence/:id/ticket-dispenser/services', component: ServiceSelection },
     { path: '/agence/:agence_id/ticket-dispenser/services/:service_id',component: serviceStatistique},
@@ -52,9 +52,9 @@ const routesAdmin = [
     {path :'/ajouter-service',component: ajouterService,props: route => ({activeItem1:"Services", role: route.params.role,dashboard:false })},
     {path :'/agence/:id/ticket-dispenser',component: HomePage,props: route => ({ role: route.params.role })},
     {path :'/ajouter-agent',component: CreateAgentAcount,props: route => ({activeItem1:"Agents", role: route.params.role })},
-    {path :'/editer-agence',component: EditAgence,props: route => ({activeItem1:"Agences", role: route.params.role })},
-    {path :'/editer-service',component: EditService,props: route => ({activeItem1:"Services", role: route.params.role })},
-    {path :'/editer-agent',component: EditAgent,props: route => ({activeItem1:"Agents", role: route.params.role })},
+    {path :'/editer-agence',name: 'edit-agency',component: EditAgence,props: route => ({agence:route.params.agence||'',activeItem1:"Agences", role: route.params.role })},
+    {path :'/editer-service',name:'edit-service',component: EditService,props: route => ({service:route.params.service||'',agence:route.params.agence||'',activeItem1:"Services", role: route.params.role })},
+    {path :'/editer-agent',name:'edit-agent',component: EditAgent,props: route => ({agent:route.params.agent||'',role2:route.params.role2||'AGENT',activeItem1:"Agents", role: route.params.role })},
     {path :'/user/:id/update-image-profile',component: UpdateProfileImage,props: route => ({role: route.params.role })},
 ];
 

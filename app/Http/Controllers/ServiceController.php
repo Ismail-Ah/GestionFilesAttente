@@ -15,7 +15,10 @@ class ServiceController extends Controller
     public function store(Request $request, Agence $agence)
     {
         try {
-            $this->validateService($request);
+            $validator = $this->validateService($request,$agence->id);
+            if ($validator->fails()) {
+                return response()->json(['errors' => $validator->errors()], 422);
+            }
     
             $service = $agence->services()->create($this->serviceData($request));
             Files_Attente::create([
@@ -31,8 +34,10 @@ class ServiceController extends Controller
     public function updateService(Request $request, Service $service)
     {
         try {
-            $this->validateService($request, $service->id);
-    
+            $validator = $this->validateService($request, $service->agence_id,$service->id);
+            if ($validator->fails()) {
+                return response()->json(['errors' => $validator->errors()], 422);
+            }
             $service->update($this->serviceData($request));
             return response()->json(['message' => 'Service modifié avec succès!', 'service' => $service], 200);
         } catch (\Exception $e) {
@@ -52,8 +57,7 @@ class ServiceController extends Controller
         return response()->json([
             'service' => $service,
             'numéroTicket' => $service->ticket()->numéro ?? null,
-            'nomAgence' => $service->agence->nom,
-            'agence_id' => $service->agence->id,
+            'agence' => $service->agence,
         ]);
     }
 
@@ -121,20 +125,25 @@ class ServiceController extends Controller
         return response()->json();
     }
 
-    private function validateService(Request $request, $ignoreId = null)
+    private function validateService(Request $request, $agence_id, $ignoreId = null)
     {
-        Validator::make($request->all(), [
+        return Validator::make($request->all(), [
             'nom' => [
                 'required',
                 'string',
                 'max:500',
-                Rule::unique('services')->ignore($ignoreId),
+                Rule::unique('services')
+                    ->where(function ($query) use ($request, $agence_id) {
+                        return $query->where('nom', $request->nom)
+                                     ->where('agence_id', $agence_id);
+                    })
+                    ->ignore($ignoreId),
             ],
             'heure_debut' => 'required|date_format:H:i',
             'heure_fin' => 'required|date_format:H:i',
             'nom_en' => 'nullable|string|max:500',
             'nom_ar' => 'nullable|string|max:500',
-        ])->validate();
+        ]);
     }
 
     private function serviceData(Request $request)

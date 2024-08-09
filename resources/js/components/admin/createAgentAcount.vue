@@ -5,7 +5,7 @@
         <div style="margin: auto; width: 50%;">
           <div class="card card-primary">
             <div class="card-header">
-              <h3 class="card-title">Ajouter une nouvelle Agent</h3>
+              <h3 class="card-title">Ajouter une nouvelle Utilisateur</h3>
             </div>
             <form @submit.prevent="createAgent" class="form-container">
               <div v-if="loading" class="spinner-wrapper">
@@ -25,8 +25,17 @@
                   <input class="form-control" type="password" id="password" v-model="password" required />
                 </div>
                 <div class="form-group">
+                  <label for="role1">Role:</label>
+                  <select class="form-control" id="agence" v-model="role1" @change="fetchRole" required>
+                    <option value="AGENT">AGENT</option>
+                    <option value="ADMINISTRATION">ADMINISTRATEUR</option>
+                  </select>
+                </div>
+
+                <div v-if="showAgenceService">
+                  <div class="form-group">
                   <label for="agence">Agence:</label>
-                  <select class="form-control" id="agence" v-model="selectedAgence" @change="fetchServices" required>
+                  <select class="form-control" id="agence" v-model="selectedAgence" @change="fetchServices" >
                     <option v-for="agence in agencies" :key="agence.id" :value="agence.id">
                       {{ agence.nom }} - {{ agence.adress }}
                     </option>
@@ -42,6 +51,9 @@
                     class="custom-vue-select"
                   ></vue-select>
                 </div>
+                </div>
+
+                
                 <div style="display: flex; justify-content: center; align-items: center; width:100%;height: 100%;">
   <p v-if="errorMessage" style="color: red; text-align: center; margin: 0; padding: 10px;" class="alert shadow-sm">{{ errorMessage }}</p>
 </div>
@@ -76,23 +88,41 @@ export default {
       nom: '',
       email: '',
       password: '',
+      role1:'AGENT',
       selectedAgence: '',
       selectedServices: [],
       agencies: [],
       services: [],
       loading: false, // Track loading state
-      errorMessage: '' // Error message state
+      errorMessage: '',
+      showAgenceService:true,
     };
   },
   methods: {
+    fetchRole(){
+      this.showAgenceService=!this.showAgenceService;
+    },
     fetchAgencies() {
-      axios.get('/agencies')
+      const cachedAgences = localStorage.getItem('Agences');
+      if (cachedAgences) {
+        this.agencies = JSON.parse(cachedAgences);
+      } else {
+      axios.get('/agencies', {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      })
         .then(response => {
           this.agencies = response.data;
+          localStorage.setItem('Agences', JSON.stringify(response.data));
+          this.initializeSelections();
+          this.loading = false;
         })
         .catch(error => {
           console.error('Error fetching agencies:', error);
         });
+      }
+     
     },
     fetchServices() {
       if (this.selectedAgence) {
@@ -115,11 +145,12 @@ export default {
         password: this.password,
         agence_id: this.selectedAgence,
         service_ids: this.selectedServices.map(service => parseInt(service.id, 10)),
+        role:this.role1,
       };
 
       axios.post('/create-agent-acount', agentData)
         .then(response => {
-          alert('Agent account created successfully!');
+          alert('Compte utilisateur créé avec succès !');
           this.nom = '';
           this.email = '';
           this.password = '';

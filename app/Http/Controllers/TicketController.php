@@ -114,6 +114,7 @@ class TicketController extends Controller
         foreach ($tickets as $ticket) {
             $ticket->service = $ticket->service;
             $ticket->nom_agence = $ticket->service->agence->nom;
+            $ticket->id_agence =  $ticket->service->agence->id;
         }
 
         return $tickets;

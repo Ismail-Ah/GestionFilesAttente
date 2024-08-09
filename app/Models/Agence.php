@@ -11,7 +11,7 @@ class Agence extends Model
     protected $table = 'agences'; // Specify the table name if different from the default (optional)
 
     protected $fillable = [
-        'nom', 'email', 'adress', 'telephone','nom_ar'
+        'nom', 'email', 'adress', 'telephone','nom_ar',
     ];
 
     public function services(){

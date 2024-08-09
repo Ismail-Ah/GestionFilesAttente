@@ -19,6 +19,7 @@ class AgentController extends Controller
             'password' => ['required', 'string', 'min:3'],
             'service_ids' => ['nullable', 'array'], // S'assurer que c'est un tableau
             'service_ids.*' => ['integer', 'exists:services,id'], // Valider chaque ID dans le tableau
+            'role' =>'required',
         ]);
     
         // Créer l'agent
@@ -26,7 +27,7 @@ class AgentController extends Controller
             'nom' => $data['nom'],
             'email' => $data['email'],
             'password' => bcrypt($data['password']),
-            'role' => 'AGENT',
+            'role' => $data['role'],
         ]);
     
         // Associer les services à l'agent
@@ -39,8 +40,10 @@ class AgentController extends Controller
                 }
             }
         }
-    
-        return response()->json("Agent ajouté avec succès", 201);
+        if ($agent->role==='AGENT'){
+            return response()->json("Agent ajouté avec succès", 201);
+        }    
+        else return response()->json("Administrateur ajouté avec succès", 201);
     }
     
     public function updateAgent(Request $request, User $user) {
@@ -50,12 +53,14 @@ class AgentController extends Controller
             'email' => ['required', 'string', 'email', 'max:100', Rule::unique('users', 'email')->ignore($user->id)],
             'service_ids' => ['nullable', 'array'], // S'assurer que service_ids est un tableau
             'service_ids.*' => ['integer', 'exists:services,id'], // Valider chaque ID de service
+            'role'=>'required',
         ]);
     
         // Mettre à jour les détails de l'utilisateur
         $user->update([
             'nom' => $data['nom'],
             'email' => $data['email'],
+            'role' => $data['role'],
         ]);
     
         // Détacher les services existants de l'utilisateur
@@ -80,7 +85,7 @@ class AgentController extends Controller
         }
     
         // Retourner une réponse de succès
-        return response()->json(['message' => 'Agent modifié avec succès!']);
+        return response()->json(['message' => 'Utilisateur modifié avec succès!']);
     }
     
     
@@ -90,7 +95,7 @@ class AgentController extends Controller
     }
     public function getAgents()
     {
-        $agents = User::where('role', 'AGENT')->get();
+        $agents = User::where('role','!=', 'ADMIN')->get();
         foreach($agents as $agent){
             $agent->agence = $agent->agence();
             $agent->services = $agent->services();

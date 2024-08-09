@@ -6,19 +6,10 @@
     <title>Queue Management</title>
     <?php echo app('Illuminate\Foundation\Vite')(['resources/js/app.js', 'resources/sass/app.scss']); ?>
     <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
+
       
 </head>
 <body>
-    <script>
-        localStorage.clear();
-    </script>
-    <div class="spinner-wrapper">
-        <div class="spinner">
-            <div class="bounce1"></div>
-            <div class="bounce2"></div>
-            <div class="bounce3"></div>
-        </div>
-    </div>
     <header id="header" class="header">
         <div class="header-content">
     <div id="app">
@@ -27,4 +18,4 @@
         </div>
     </header>
 </body>
-</html><?php /**PATH D:\Documents\stage\project\resources\views/statistiques.blade.php ENDPATH**/ ?>
+</html><?php /**PATH D:\Documents\stage\project\resources\views/editer-agence.blade.php ENDPATH**/ ?>

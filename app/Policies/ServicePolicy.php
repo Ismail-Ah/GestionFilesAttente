@@ -66,15 +66,22 @@ class ServicePolicy
 
    
 
-        public function prendreTicket(?User $user, Service $service): bool
-        {
-            $currentDateTime = Carbon::now();
-
+    public function prendreTicket(?User $user, Service $service): bool
+    {
+        $currentDateTime = Carbon::now();
+        $startTime = Carbon::createFromFormat('H:i:s', $service->heure_debut);
+        $endTime = Carbon::createFromFormat('H:i:s', $service->heure_fin);
+    
+        if ($endTime->lessThan($startTime)) {
+            // Service ends after midnight
             return $service->etat === 'ACTIF' &&
-                $currentDateTime->between(
-                    Carbon::createFromFormat('H:i:s', $service->heure_debut),
-                    Carbon::createFromFormat('H:i:s', $service->heure_fin)
-                );
+                ($currentDateTime->greaterThanOrEqualTo($startTime) || $currentDateTime->lessThanOrEqualTo($endTime));
+        } else {
+            // Service ends on the same day
+            return $service->etat === 'ACTIF' &&
+                $currentDateTime->between($startTime, $endTime);
         }
+    }
+    
 
 }

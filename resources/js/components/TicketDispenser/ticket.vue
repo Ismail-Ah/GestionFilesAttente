@@ -1,20 +1,22 @@
 <template>
   <div class="ticket-container">
-    <div v-if="loading">
+    <div v-if="loading" style="margin-top:-10%">
       <LoadingSpinner></LoadingSpinner>
     </div>
     <div v-else class="ticket-print" id="printable-content">
-      <h2>{{ nomAgence }}</h2>
+      <h2>{{ lan === 'ar' ? (agence.nom_ar || agence.nom) : agence.nom }}</h2>
       <h2>{{ $t('Bienvenue') }}</h2>
       <hr />
       <h2>AG{{ agence_id }} S{{ Service.id }}</h2>
       <h1>N° {{ numéroTicket }}</h1>
       <hr />
-      <h4>Service : {{ Service.nom }}</h4>
+      <h4>
+        {{$t('Service')}} : 
+        {{ lan === 'fr' ? Service.nom : lan === 'en' ? (Service.nom_en || Service.nom) : (Service.nom_ar || Service.nom) }}
+      </h4>
       <p>{{ $t('Instructions') }}</p>
       <h4>&#128197; {{ formatDate() }}</h4>
     </div>
-    <button @click="printTicket">Print Ticket</button>
   </div>
 </template>
 
@@ -29,10 +31,11 @@ export default {
     return {
       service_id: this.$route.params.service_id,
       agence_id: this.$route.params.agence_id,
-      Service: '',
+      Service: {},
       numéroTicket: '',
-      nomAgence: '',
+      agence: {},
       loading: true,
+      lan: this.$i18n.locale,
     };
   },
   methods: {
@@ -41,12 +44,18 @@ export default {
         const response = await axios.get(`/service/${parseInt(this.service_id)}`);
         this.Service = response.data.service;
         this.numéroTicket = response.data.numéroTicket;
-        this.nomAgence = response.data.nomAgence;
-        this.agence_id = response.data.agence_id;
+        this.agence = response.data.agence;
+        this.agence_id = this.agence.id;
       } catch (error) {
-        console.error('Erreur lors de la récupération des agences:', error);
+        console.error('Erreur lors de la récupération des services:', error);
       } finally {
         this.loading = false;
+        // Ensure DOM updates are complete before printing
+        this.$nextTick(() => {
+          setTimeout(() => {
+            this.printTicket();
+          }, 2000); // 2000 milliseconds = 2 seconds
+        });
       }
     },
     printTicket() {
@@ -57,7 +66,6 @@ export default {
         <html>
           <head>
             <style>
-            
               @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
               body { font-family: 'Roboto', sans-serif; margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; height: 100vh; }
               .ticket-print { width: auto; max-width: 800px; margin: 0; padding: 30px; background-color: #ffffff; border: 1px solid #cccccc; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); text-align: center; }
@@ -67,7 +75,7 @@ export default {
               hr { border: 0; border-top: 1px solid #cccccc; margin: 20px 0; }
             </style>
           </head>
-          <body onload="window.print(); window.close();">
+          <body>
             <div class="ticket-print">
               ${content}
             </div>
@@ -75,7 +83,14 @@ export default {
         </html>
       `);
       printWindow.document.close();
-      this.$router.push(`/agence/${this.agence_id}/ticket-dispenser`);
+
+      // Ensure that the print dialog is triggered after the content is fully written
+      setTimeout(() => {
+        printWindow.focus(); // Required for IE
+        printWindow.print();
+        printWindow.close();
+        this.$router.push(`/ticket-dispenser/agences/${this.agence_id}`);
+      }, 100); // Short delay to ensure the content is fully loaded
     },
     formatDate() {
       const now = new Date();
@@ -100,20 +115,18 @@ export default {
   flex-direction: column;
   align-items: center;
   justify-content: center;
- 
   width: 100%;
   text-align: center;
   font-family: 'Roboto', sans-serif; /* Using Roboto font */
 }
 
 .ticket-print {
+  max-width:420px;
   background-color: #ffffff;
   border: 1px solid #cccccc;
   border-radius: 10px; /* Rounded corners */
   padding: 30px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Shadow effect */
-  margin-bottom: 20px;
-
 }
 
 .ticket-print h1 {
@@ -127,10 +140,11 @@ export default {
   font-size: 1.2em;
   margin: 5px 0;
   color: #444;
-  text-align: center;
 }
 
 button {
+  position: fixed;
+  top: 85%;
   background-color: #007bff;
   color: #ffffff;
   border: none;

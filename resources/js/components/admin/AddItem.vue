@@ -48,9 +48,9 @@
       </div>
 
       <div class="card-footer" style="display: flex; justify-content: center;">
-          
-        <button type="submit" class="btn btn-primary">Submit</button>
-      </div>
+  <button type="submit" class="btn btn-primary">Submit</button>
+</div>
+
     </form>
 
     <div v-if="showKeyboard" id="simple-keyboard" class="simple-keyboard"></div>
@@ -98,29 +98,50 @@ export default {
   },
   methods: {
     handleSubmit() {
-      this.loading = true; // Show spinner
-      const data = this.inputs.reduce((obj, input) => {
-        obj[input.id] = input.model;
-        return obj;
-      }, {});
-      axios.post(this.action, data)
-        .then(response => {
-          this.successMessage = response.data.message;
-          this.errorMessage = '';
-          alert(`${this.name} a été ajouté avec succès!`);
-          this.$router.go(-1);
-        })
-        .catch(error => {
-          if (error.response && error.response.data && error.response.data.errors) {
-            this.errorMessage = Object.values(error.response.data.errors).flat().join(', ');
-          } else {
-            this.errorMessage = error.message;
-          }
-        })
-        .finally(() => {
-          this.loading = false; // Hide spinner
-        });
-    },
+  this.loading = true; // Show spinner
+  const data = this.inputs.reduce((obj, input) => {
+    obj[input.id] = input.model;
+    return obj;
+  }, {});
+  
+  axios.post(this.action, data)
+    .then(response => {
+      if (this.name === 'Service') {
+        // Ensure 'url' variable is defined; if it's not, extract it from `this.action`
+        const url = this.action;
+        const match = url.match(/\/services\/(\d+)\/update/);
+
+        if (match) {
+          localStorage.removeItem(`Agence${match[1]}Services`);
+        }
+      }
+      else{
+        localStorage.removeItem(`Agences`);
+        localStorage.removeItem(`agences`);
+
+
+      }
+      
+      this.successMessage = response.data.message;
+      this.errorMessage = '';
+      if(this.action.includes('update')){
+        alert(`${this.name} a été mise à jour avec succès!`);
+      }
+      else alert(`${this.name} a été ajouté avec succès!`);
+      this.$router.go(-1);
+    })
+    .catch(error => {
+      if (error.response && error.response.data && error.response.data.errors) {
+        this.errorMessage = Object.values(error.response.data.errors).flat().join(', ');
+      } else {
+        this.errorMessage = error.message;
+      }
+    })
+    .finally(() => {
+      this.loading = false; // Hide spinner
+    });
+}
+,
     deleteItem() {
       let id = this.id_item;
       let choix = confirm(`Tapez ok pour supprimer cette ${this.name} ?`);
@@ -129,6 +150,12 @@ export default {
         if (this.name === 'Service') url = '/services';
         axios.delete(`${url}/${id}`).then(response => {
           console.log("L'élément a été supprimé");
+          if(this.name==='Service'){
+            localStorage.removeItem(`Agence${id}Services`);
+          }
+          else{
+            localStorage.removeItem(`agences`);
+          }
           this.$router.go(-1);
         }).catch(error => {
           console.error("Erreur");

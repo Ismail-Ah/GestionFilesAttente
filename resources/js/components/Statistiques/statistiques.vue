@@ -95,29 +95,53 @@ export default {
       this.showFilters = !this.showFilters;
     },
     fetchAgencies() {
-      axios.get('/agencies')
-        .then(response => {
-          this.agencies = response.data;
-          this.loading = false;
-        })
-        .catch(error => {
-          console.error('Error fetching agencies:', error);
-        });
-    },
-    fetchServices() {
-      if (this.selectedAgence) {
-        axios.get(`/agence/${this.selectedAgence}`)
-          .then(response => {
-            this.services = response.data;
-            this.selectedService = ''; // Reset selectedService when agence changes
-          })
-          .catch(error => {
-            console.error('Error fetching services:', error);
-          });
-      } else {
-        this.services = [];
+  const cachedAgencies = localStorage.getItem('Agences');
+  if (cachedAgencies) {
+    this.agencies = JSON.parse(cachedAgencies);
+    this.loading = false;
+  } else {
+    axios.get('/agencies', {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
       }
-    },
+    })
+      .then(response => {
+        this.agencies = response.data;
+        localStorage.setItem('Agences', JSON.stringify(response.data));
+        this.loading = false;
+      })
+      .catch(error => {
+        console.error('Error fetching agencies:', error);
+        this.loading = false;  // Assurez-vous de mettre à jour l'état de chargement en cas d'erreur également
+      });
+  }
+},
+
+
+
+async fetchServices() {
+  if (this.selectedAgence) {
+    try {
+      // Check if services data is cached in localStorage
+      const cachedServices = localStorage.getItem(`Agence${this.selectedAgence}Services`);
+      if (cachedServices) {
+        this.services = JSON.parse(cachedServices);
+      } else {
+        const response = await axios.get(`/agence/${this.selectedAgence}/services`);
+        this.services = response.data;
+        localStorage.setItem(`Agence${this.selectedAgence}Services`, JSON.stringify(this.services));
+      }
+    } catch (error) {
+      console.error('Error fetching services:', error);
+      this.services = []; 
+      this.selectedService = null; 
+    }
+  } else {
+    this.services = [];
+    this.selectedService = null;
+  }
+}
+,
     filter(type) {
       this.timeFilter = type;
       this.showFilters =!this.showFilters;

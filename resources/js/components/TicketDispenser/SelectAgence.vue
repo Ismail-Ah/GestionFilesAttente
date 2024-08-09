@@ -1,6 +1,6 @@
 <template>
   <div style="display: flex; flex-direction: column; align-items: center; margin-top: -5%; width: 100%;">
-    <h1 class="title">Select Agence</h1>
+    <h1 class="title">Sélectionner Agence</h1>
     <div v-if="loading" style="margin-top: -10%;">
       <LoadingSpinner></LoadingSpinner>
     </div>
@@ -48,6 +48,9 @@ export default {
       pageSize: 4,
     };
   },
+  props:{
+    url:String,
+  },
   computed: {
     totalPages() {
       return Math.ceil(this.agencies.length / this.pageSize);
@@ -64,18 +67,25 @@ export default {
     },
   },
   methods: {
-    getAgencies() {
-      axios.get('/agencies')
-        .then(response => {
+    async getAgencies() {
+      try {
+        const cachedAgencies = localStorage.getItem('agences');
+        if (cachedAgencies) {
+          this.agencies = JSON.parse(cachedAgencies);
+        } else {
+          const response = await axios.get('/agencies');
           this.agencies = response.data;
-          this.loading = false;
-        })
-        .catch(error => {
-          console.error('Erreur lors de la récupération des agences:', error);
-        });
+          localStorage.setItem('agences', JSON.stringify(this.agencies));
+        }
+      } catch (error) {
+        console.error('Erreur lors de la récupération des agences:', error);
+        this.agencies = []; // Ensure agencies is cleared on error
+      } finally {
+        this.loading = false;
+      }
     },
     clickAgence(id) {
-      this.$router.push(`${this.$route.params.url}agences/${id}`);
+      this.$router.push(`${this.url}agences/${id}`);
     },
     nextPage() {
       if (this.currentPage < this.totalPages) {
@@ -146,14 +156,13 @@ export default {
   justify-content: center; /* Center text horizontally */
 }
 
-
 .btn-solid-lg {
   display: inline-block;
   padding: 1.375rem 2.625rem;
   border: 0.125rem solid #023047;
   border-radius: 1rem;
   background-color: #023047;
-  color: #fff;
+  color: #FB8500;
   font: 700 0.875rem / 1 "Open Sans", sans-serif;
   text-decoration: none;
   -webkit-box-shadow: 0px 0px 5px 1px rgba(2,48,71,1);
@@ -173,7 +182,14 @@ export default {
 .btn-solid-lg.page-scroll:hover {
   background-color: #fff;
   border-color: #023047;
-  color: #023047;
+  color: #FB8500;
+}
+
+.seven{
+  font-size: 1.2rem; /* Slightly larger for emphasis */
+  line-height: 1.4;
+  font-weight: 700;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* Add text shadow for better readability */
 }
 
 .pagination {
@@ -182,14 +198,23 @@ export default {
   align-items: center;
   width: 100%;
   max-width: 600px;
-  margin-top: 80px;
+
 }
 
+.pagination #next{
+  position:fixed;
+  top:80%;
+  right:28.5%;
+}
+.pagination #previous{
+  position:fixed;
+  top:80%;
+  left:28.5%;
+}
 .pagination button {
   box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 5px 0px, rgba(0, 0, 0, 0.1) 0px 0px 1px 0px;
   width: 100px;
   padding: 10px 20px;
-  margin: 0 5px;
   border: none;
   border-radius: 5px;
   background-color: #023047;

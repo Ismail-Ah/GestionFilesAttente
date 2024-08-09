@@ -46,6 +46,7 @@
   margin-bottom: 10px;
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
   padding: 20px;
+  
 }
 
 
@@ -62,10 +63,17 @@
   -moz-box-shadow: 0px 0px 5px 1px rgba(2,48,71,1);
   box-shadow: 0px 0px 5px 1px rgba(2,48,71,1);
 
+  font-size: 1.6rem; /* Slightly larger for emphasis */
+  line-height: 1.4;
+  margin-bottom: 0.5rem; /* Space between top and bottom text */
+  font-weight: 700;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+
   margin: 0.5rem;
   margin-top: 40px;
   text-align: center; /* Center text horizontally */
   vertical-align: middle; /* Center text vertically */
+  
 }
 
 .btn-solid-lg.page-scroll {

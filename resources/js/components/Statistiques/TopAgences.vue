@@ -3,9 +3,6 @@
     <div class="card-header">
       <h5 class="card-title">Top Agences</h5>
       <div class="card-tools">
-        <button type="button" class="btn btn-tool" data-card-widget="collapse">
-          <i class="fas fa-minus"></i>
-        </button>
         <div class="btn-group">
           <button type="button" class="btn btn-tool dropdown-toggle" @click="toggleFilters">
             <i class="fas fa-bars"></i>
@@ -18,13 +15,14 @@
             <a @click.prevent="getTopAgences('tempsMoyenAttente')" href="#" class="dropdown-item">Temps Moyen d'Attente</a>
           </div>
         </div>
-        <button type="button" class="btn btn-tool" data-card-widget="remove">
-          <i class="fas fa-times"></i>
+        <button type="button" class="btn btn-tool" data-card-widget="collapse" @click="toggleShowList">
+          <i :class="ShowList ? 'fas fa-minus' : 'fas fa-plus'"></i>
         </button>
+        
       </div>
     </div>
     <!-- /.card-header -->
-    <div class="card-body">
+    <div class="card-body" v-if="ShowList">
       <p class="text-center">
         <strong>{{ currentFilterLabel }}</strong>
       </p>
@@ -53,6 +51,7 @@ export default {
   name: 'TopAgences',
   data() {
     return {
+      ShowList:true,
       data: [],
       agences: [],
       showFilters: false,
@@ -69,6 +68,9 @@ export default {
     };
   },
   methods: {
+    toggleShowList() {
+      this.ShowList = !this.ShowList;
+    },
     toggleFilters() {
       this.showFilters = !this.showFilters;
     },
