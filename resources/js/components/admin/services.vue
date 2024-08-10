@@ -125,7 +125,7 @@ export default {
     this.loading = false; // Stop loading if data is fetched from localStorage
     this.$nextTick(() => this.setMaxButtonHeight());
   } else {
-    axios.get(`/agence/${this.id}/services`)
+    axios.get(`/agence/${this.id}/services2`)
       .then(response => {
         const currentTime = new Date();
         this.services = response.data;

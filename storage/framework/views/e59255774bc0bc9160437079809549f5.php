@@ -21,4 +21,4 @@
         </div>
     </header>
 </body>
-</html><?php /**PATH D:\Documents\stage\project\resources\views/editer-service.blade.php ENDPATH**/ ?>
+</html><?php /**PATH D:\Documents\stage\project\resources\views\updateImageProfile.blade.php ENDPATH**/ ?>

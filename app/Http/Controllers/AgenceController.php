@@ -45,6 +45,21 @@ class AgenceController extends Controller
         return response()->json(Agence::all());
     }
 
+    public function getAgences1(){
+    $user = auth()->user();
+    if ($user->role === 'AGENT') {
+        // Fetch the first associated service, then get the related agency ID
+        $services = $user->services;
+        if ($services->isNotEmpty()) {
+            $agence = Agence::find($services->first()->agence_id);
+            return response()->json([$agence]);
+            }
+        }
+        return response()->json(Agence::all());
+    }
+   
+
+
     public function getAgence(Agence $agence)
     {
         return response()->json($agence);

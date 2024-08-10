@@ -38,6 +38,7 @@ const routesHome=[
         component: Profile,
         props: route => ({
             activeItem1:"profile",
+          role1: route.params.role1||route.params.role,
           role: route.params.role,
           profile_id: route.params.profile_id || 0 
         })

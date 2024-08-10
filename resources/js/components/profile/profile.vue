@@ -15,7 +15,7 @@
                 <div class="edit-icon" @click="edit('profile')">
                   <i class="fas fa-user-edit"></i>
                   <div v-if="showEditProfile" class="dropdown-menu dropdown-menu-right show">
-                    <a @click.prevent="editItem(user.id,user.role)" href="#" class="dropdown-item">Editer le Profil</a>
+                    <a v-if="role!='ADMIN' || user.role!='ADMIN'" @click.prevent="editItem(user.id,user.role)" href="#" class="dropdown-item">Editer le Profil</a>
                     <a @click.prevent="changerImageProfile(user.id)" href="#" class="dropdown-item">Changer l'Image du Profil</a>
                     <a v-if="(role=='ADMIN' || role=='ADMINISTRATION') && user.role=='AGENT'" @click.prevent="deleteItem(user.id, user.nom)" href="#" class="dropdown-item" style="color:red;">Supprimer</a>
                   </div>
@@ -27,7 +27,7 @@
                   <h3 class="profile-username text-center" style="color: dodgerblue;">
                     <strong>{{user.nom}}</strong>
                   </h3>
-                  <p class="text-muted text-center"><b>{{user.role==='ADMINISTRATION'?'ADMINISTRATEUR':user.role}}</b></p>
+                  <p class="text-muted text-center"><b>{{user.role==='ADMINISTRATION'?'ADMINISTRATEUR':user.role==='ADMIN'?'ADMIN_COMPTES':user.role}}</b></p>
                   <ul class="list-group list-group-unbordered mb-3">
                     <li class="list-group-item">
                       <b>{{user.email}}</b>
@@ -37,13 +37,13 @@
               </div>
             </div>
             <div style="display:block">
-              <div style="display:flex">
-                <div class="col-md-9 col-sm-6 col-12" style="margin-bottom: 3%" v-if="role==='ADMIN' || role==='ADMINISTRATION'">
+              <div v-if="role!='ADMIN' || user.role==='AGENT' || user.role==='ADMINISTRATION'" style="display:flex">
+                <div class="col-md-9 col-sm-6 col-12" style="margin-bottom: 3%" v-if="user.role!='AGENT' && (role==='ADMIN' || role==='ADMINISTRATION')">
                   <div style="margin: auto;" class="info-box">
                     <div v-if="user.role==='ADMIN' || user.role==='ADMINISTRATION'" class="edit-icon" @click="edit('agence')">
                       <i class="fas fa-edit"></i>
                       <div v-if="showEditAgence" class="dropdown-menu dropdown-menu-right show">
-                        <a @click.prevent="editItem1('agence')" href="#" class="dropdown-item">Éditer Agence</a>
+                        <a @click.prevent="editItem1('agence')" href="#" class="dropdown-item">Editer Agence</a>
                         <a v-if="(role=='ADMIN' || role=='ADMINISTRATION')" @click.prevent="addItem1('agence')" href="#" class="dropdown-item" style="color:blue;">Ajouter Agence</a>
                       </div>
                     </div>
@@ -58,10 +58,10 @@
                 </div>
                 <div class="col-md-9 col-sm-6 col-12">
                   <div style="margin:auto " class="info-box">
-                    <div v-if="user.role==='ADMIN' || user.role==='ADMINISTRATION'" class="edit-icon" @click="edit('service')">
+                    <div v-if="user.role==='ADMINISTRATION'" class="edit-icon" @click="edit('service')">
                       <i class="fas fa-edit"></i>
                       <div v-if="showEditService" class="dropdown-menu dropdown-menu-right show">
-                        <a @click.prevent="editItem1('service')" href="#" class="dropdown-item">Éditer Service</a>
+                        <a @click.prevent="editItem1('service')" href="#" class="dropdown-item">Editer Service</a>
                         <a v-if="(role=='ADMIN' || role=='ADMINISTRATION')" @click.prevent="addItem1('service')" href="#" class="dropdown-item" style="color:blue;">Ajouter Service</a>
                       </div>
                     </div>
@@ -74,7 +74,7 @@
                     </div>
                   </div>
                 </div>
-                <div class="col-md-9 col-sm-6 col-12" v-if="role==='AGENT'" style="visibility: hidden">
+                <div class="col-md-9 col-sm-6 col-12" v-if="user.role==='AGENT' || role==='AGENT'" style="visibility: hidden">
                   <div style="margin: auto;" class="info-box">
                     <span class="info-box-icon bg-info">
                       <i class="fas fa-building"></i>
@@ -86,17 +86,37 @@
                   </div>
                 </div>
               </div>
-              <div class="col-md-9 col-sm-6 col-12" style="margin-top: auto;" v-if="role==='ADMIN' || role==='ADMINISTRATION'">
+
+<div style="display: flex;">
+  <div class="col-md-9 col-sm-6 col-12" style="margin-bottom: 3%" v-if="role==='ADMIN' && user.role==='ADMIN'">
+                  <div style="margin: auto;" class="info-box">
+                    <div v-if=" role==='ADMIN'" class="edit-icon" @click="edit('administrateur')">
+                      <i class="fas fa-edit"></i>
+                      <div v-if="showEditAdministrateur" class="dropdown-menu dropdown-menu-right show">
+                        <a @click.prevent="editItem1('agent')" href="#" class="dropdown-item">Editer Administrateur</a>
+                        <a v-if="(role=='ADMIN' )" @click.prevent="addItem1('agence')" href="#" class="dropdown-item" style="color:blue;">Ajouter Administrateur</a>
+                      </div>
+                    </div>
+                    <span class="info-box-icon bg-info">
+                      <i class="fas fa-user"></i>
+                    </span>
+                    <div class="info-box-content" >
+                      <h6 class="info-box-text">Administr..</h6>
+                      <h4 class="info-box-number">{{nmbAdministrateurs}}</h4>
+                    </div>
+                  </div>
+                </div>
+  <div class="col-md-9 col-sm-6 col-12"  style="margin-top: auto;" v-if="(role!='AGENT' && role1!='AGENT' && user.role!='AGENT')">
                 <div class="info-box">
                   <div v-if="user.role==='ADMIN' || user.role==='ADMINISTRATION'" class="edit-icon" @click="edit('agent')">
                     <i class="fas fa-edit"></i>
                     <div v-if="showEditAgent" class="dropdown-menu dropdown-menu-right show">
-                      <a @click.prevent="editItem1('agent')" href="#" class="dropdown-item">Éditer Agent</a>
+                      <a @click.prevent="editItem1('agent')" href="#" class="dropdown-item">Editer Agent</a>
                       <a v-if="(role=='ADMIN' || role=='ADMINISTRATION')" @click.prevent="addItem1('agent')" href="#" class="dropdown-item" style="color:blue;">Ajouter Agent</a>
                     </div>
                   </div>
                   <span class="info-box-icon bg-warning">
-                    <i class="fas fa-user"></i>
+                    <i class="fas fa-users"></i>
                   </span>
                   <div class="info-box-content" style="margin-top:auto">
                     <h6 class="info-box-text">Agents</h6>
@@ -104,13 +124,17 @@
                   </div>
                 </div>
               </div>
+</div>
+
+             
             </div>
           </div>
         </div>
-        <Agences v-if="role==='ADMIN' || role==='ADMINISTRATION'" @deletItem="ItemDeleted"></Agences>
-        <Services v-if="role==='ADMIN' || role==='ADMINISTRATION' || role==='AGENT'" @deletItem="ItemDeleted" :role="role" :user_id="user.id"></Services>
-        <Agents v-if="role==='ADMIN' || role==='ADMINISTRATION'" @deletItem="ItemDeleted"></Agents>
+        <Agences v-if="user.role==='ADMINISTRATION' || role==='ADMINISTRATION' || role1==='ADMINISTRATION'" :role="role" @deletItem="ItemDeleted"></Agences>
+        <Services v-if="role==='ADMINISTRATION' || role==='AGENT' || role1==='ADMINISTRATION' || role1==='AGENT' || user.role==='AGENT' " @deletItem="ItemDeleted" :role="role"  :role1="role1"  :user_id="user.id"></Services>
+        <Agents v-if="user.role!='AGENT' && (role==='ADMIN' || role==='ADMINISTRATION' || role1==='ADMINISTRATION')" @deletItem="ItemDeleted"  :role="role"></Agents>
         <StatTickets v-if="role==='AGENT'" name='agent' :name_id="user.id"></StatTickets>
+        <Administrateurs v-if="user.role!='AGENT' && user.role!='ADMINISTRATION'  && role==='ADMIN'"></Administrateurs>
       </div>
     </PageContent>
   </div>
@@ -124,15 +148,17 @@ import LoadingSpinner from '../LoadingSpinner.vue';
 import Agences from './Agences.vue';
 import Services from './Services.vue';
 import Agents from './Agents.vue';
+import Administrateurs from './Administrateurs.vue';
 
 export default {
   name: 'Profile',
-  components: {StatTickets, Agents, Services, Agences, PageContent, LoadingSpinner },
+  components: {StatTickets, Agents, Services, Agences, PageContent, LoadingSpinner ,Administrateurs},
   data() {
     return {
       nmbAgences: 0,
       nmbServices: 0,
       nmbAgents: 0,
+      nmbAdministrateurs:0,
       user: '',
       loading: true,
       loading1: true,
@@ -140,11 +166,13 @@ export default {
       showEditAgence: false,
       showEditAgent: false,
       showEditService: false,
+      showEditAdministrateur:false,
     }
   },
   props: {
     profile_id: [String, Number],
     role: String,
+    role1:String,
   },
   methods: {
     editProfile() {
@@ -158,6 +186,7 @@ export default {
     },
     getUserInfo() {
       const cacheKey = `user_info_${this.profile_id}`;
+      console.log("url = ",cacheKey);
       const cachedUser = localStorage.getItem(cacheKey);
 
       if (cachedUser) {
@@ -190,6 +219,8 @@ export default {
         this.showEditAgence = false;
         this.showEditService = false;
         this.showEditAgent = false;
+                this.showEditAdministrateur=false;
+
       } else if (item === 'agence') {
         this.showEditAgence = !this.showEditAgence;
         this.showEditProfile = false;
@@ -205,21 +236,45 @@ export default {
         this.showEditProfile = false;
         this.showEditAgence = false;
         this.showEditService = false;
+                this.showEditAdministrateur=false;
+
+      }
+      else if (item === 'administrateur') {
+        this.showEditAdministrateur= !this.showEditAdministrateur;
+        this.showEditProfile = false;
+
+
+                this.showEditAgent=false;
+
       }
     },
     addItem1(item) {
       this.$router.push('/ajouter-' + item);
     },
+    deleteItem() {
+  let id = this.user.id;
+  let choix = confirm(`Tapez OK pour supprimer le compte de ${this.user.nom} ?`);
+  if (choix) {
+    axios.delete(`/agents/${id}`)
+      .then(response => {
+        console.log("Compte supprimé avec succès");
+      })
+      .catch(error => {
+        console.error("Erreur lors de la suppression du compte :", error);
+      });
+  }
+},
+
     deleteItem1(item) {
       this.$router.push('/editer-' + item);
     },
     getInfos() {
-
-        axios.get('/profile/dataAgenceService')
+        axios.get(`/profile/${this.profile_id}/dataAgenceService`)
           .then(response => {
             this.nmbAgences = response.data.nmbAgences;
             this.nmbServices = response.data.nmbServices;
             this.nmbAgents = response.data.nmbAgents;
+            this.nmbAdministrateurs=response.data.nmbAdministrateurs;
             this.loading = false;
           })
           .catch(error => {
@@ -231,14 +286,19 @@ export default {
     }
   },
   watch: {
-    profile_id: 'getUserInfo',
-    role(newValue) {
-      if (newValue) {
-        this.fetchLoading1();
-      }
-    }
+  profile_id(newVal) {
+    this.getUserInfo();
+    this.getInfos();
   },
+  role(newValue) {
+    if (newValue) {
+      this.fetchLoading1();
+    }
+  }
+},
+
   created() {
+
     this.getUserInfo();
     this.getInfos();
     if (this.role) {

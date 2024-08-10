@@ -140,6 +140,8 @@ export default {
       this.showForm=true;
       if (this.selectedAgence) {
         localStorage.removeItem(`Agence${this.selectedAgence}Services`);
+        localStorage.removeItem(`Agence${this.selectedAgence}ServicesAgent`);
+
       };
     }
   },
@@ -149,6 +151,8 @@ export default {
     }
     else {
       localStorage.removeItem(`Agence${this.$route.params.id}Services`);
+      localStorage.removeItem(`Agence${this.$route.params.id}ServicesAgent`);
+
     }
    
   }

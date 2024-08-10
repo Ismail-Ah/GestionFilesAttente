@@ -24,12 +24,15 @@
        <div class="row">
          <div class="col-sm-6">
            <div class="form-group">
-             <label>Sélectionner Agence</label>
+             <label>{{role!='AGENT'?'Sélectionner Agence':'Votre Agence'}}</label>
              <div class="position-relative d-flex align-items-center">
                <select class="form-control" v-model="selectedAgence" @change="fetchServices">
-                 <option value="">Agence</option>
-                 <option v-for="agence in agencies" :key="agence.id" :value="agence.id">{{ agence.nom }} - {{ agence.adress }}</option>
-               </select>
+                <option  :value="role==='AGENT'?selectedAgence:''">{{ default_agence }}</option>
+                   <template v-if="role!='AGENT'">
+                    <option  v-for="agence in agencies"  :key="agence.id" :value="agence.id" >Ag{{agence.id}} | {{ agence.nom }} - {{ agence.adress }}</option>
+
+                   </template>
+                                 </select>
              </div>
            </div>
          </div>
@@ -39,7 +42,7 @@
              <div class="position-relative d-flex align-items-center">
                <select class="form-control" :disabled="!selectedAgence" v-model="selectedService">
                  <option value="">Service</option>
-                 <option v-for="service in services" :key="service.id" :value="service.id">{{ service.nom }}</option>
+                 <option v-for="service in services" :key="service.id" :value="service.id">S{{ service.id }} | {{ service.nom }}</option>
                </select>
                <div v-if="role !== 'AGENT'" class="btn-group btn-group-sm ml-1 add-agence-indicator">
                 
@@ -88,6 +91,7 @@ export default {
       timeFilter: 30,
       calender:'Dérniere Mois',
       loading1:true,
+      default_agence:'Agence',
     };
   },
   methods: {
@@ -95,27 +99,30 @@ export default {
       this.showFilters = !this.showFilters;
     },
     fetchAgencies() {
-  const cachedAgencies = localStorage.getItem('Agences');
-  if (cachedAgencies) {
-    this.agencies = JSON.parse(cachedAgencies);
-    this.loading = false;
-  } else {
-    axios.get('/agencies', {
-      headers: {
-        'Authorization': `Bearer ${localStorage.getItem('token')}`
-      }
-    })
-      .then(response => {
-        this.agencies = response.data;
-        localStorage.setItem('Agences', JSON.stringify(response.data));
+      const cachedAgences = localStorage.getItem('Agences1');
+      if (cachedAgences) {
+        this.agencies = JSON.parse(cachedAgences);
+        if(this.role==='AGENT' && this.agencies.length!=0){
+          this.selectedAgence=this.agencies[0].id;
+          this.default_agence = `Ag${this.agencies[0].id} | ${this.agencies[0].nom} - ${this.agencies[0].adress}`;
+        }
         this.loading = false;
-      })
-      .catch(error => {
-        console.error('Error fetching agencies:', error);
-        this.loading = false;  // Assurez-vous de mettre à jour l'état de chargement en cas d'erreur également
-      });
-  }
-},
+      } else {
+      axios.get('/agencies1')
+        .then(response => {
+          this.agencies = response.data;
+          if(this.role==='AGENT' && this.agencies.length!=0){
+            this.selectedAgence=this.agencies[0].id;
+            this.default_agence = `Ag${this.agencies[0].id} | ${this.agencies[0].nom} - ${this.agencies[0].adress}`;
+          }
+          localStorage.setItem('Agences1', JSON.stringify(response.data));
+          this.loading = false;
+        })
+        .catch(error => {
+          console.error('Error fetching agencies:', error);
+        });
+      }
+      },
 
 
 
@@ -123,22 +130,22 @@ async fetchServices() {
   if (this.selectedAgence) {
     try {
       // Check if services data is cached in localStorage
-      const cachedServices = localStorage.getItem(`Agence${this.selectedAgence}Services`);
+      const cachedServices = localStorage.getItem(`Agence${this.selectedAgence}ServicesAgent`);
       if (cachedServices) {
         this.services = JSON.parse(cachedServices);
       } else {
         const response = await axios.get(`/agence/${this.selectedAgence}/services`);
         this.services = response.data;
-        localStorage.setItem(`Agence${this.selectedAgence}Services`, JSON.stringify(this.services));
+        localStorage.setItem(`Agence${this.selectedAgence}ServicesAgent`, JSON.stringify(this.services));
       }
     } catch (error) {
       console.error('Error fetching services:', error);
       this.services = []; 
-      this.selectedService = null; 
+      this.selectedService = ''; 
     }
   } else {
     this.services = [];
-    this.selectedService = null;
+    this.selectedService = '';
   }
 }
 ,
@@ -159,6 +166,7 @@ async fetchServices() {
       if (newValue) {
         this.name = 'agence';
         this.name_id = newValue;
+        this.fetchServices();
       } else {
         this.name = 'agencies';
         this.name_id = '';

@@ -16,23 +16,18 @@
             <thead>
               <tr>
                 <th v-for="header in headers" :key="header">{{ header }}</th>
-                <th></th>
+                <th v-if="canEdit"></th>
               </tr>
             </thead>
             <tbody>
-              <tr v-if="loading">
-                <td colspan="100%">
-                  <LoadingSpinner></LoadingSpinner>
-                </td>
-              </tr>
-              <tr v-else v-for="item in paginatedItems" :key="item.id">
+              <tr v-for="item in paginatedItems" :key="item.id">
                 <td v-for="field in fields" :key="field">{{ getItemField(item, field) || '-' }}</td>
                 <td>
                   <div class="sparkbar" data-color="#00a65a" data-height="20">
                     {{ formatDate(item.created_at) }}
                   </div>
                 </td>
-                <td class="project-actions text-right">
+                <td v-if="canEdit" class="project-actions text-right">
                   <select 
                     v-if="title === 'Services'" 
                     :style="{ width: '41%', marginRight: '10px' }"
@@ -43,7 +38,7 @@
                     <option value="INACTIF">INACTIF</option>
                   </select>
 
-                  <div class="btn-group filter-btn-group">
+                  <div v-if="canEdit" class="btn-group filter-btn-group">
                     <a class="btn btn-success btn-sm mr-2" @click="view(item)">
                       <i class="fas fa-eye"></i>
                     </a>
@@ -74,6 +69,7 @@ import axios from 'axios';
 
 export default {
   name: 'ReusableList',
+  components:{},
   props: {
     title: {
       type: String,
@@ -99,6 +95,10 @@ export default {
       type: String,
       default: '',
     },
+    role1: {
+      type: String,
+      default: '',
+    },
     user_id: {
       type: Number,
       default: 0,
@@ -107,6 +107,8 @@ export default {
       type: Object,
       default: () => ({}),
     },
+    canEdit:Boolean,
+    profile_id:Number,
   },
   data() {
     return {
@@ -116,7 +118,6 @@ export default {
       pageSize: 4,
       showOptions: {},
       selectedEtatServices: {},
-      loading: true,
     };
   },
   computed: {
@@ -144,10 +145,11 @@ export default {
     async view(item) {
       const { id, agence } = item;
       const id2 = agence ? agence.id : 0;
-      const url = this.title === 'Agents' ? 'profile' : 'dashboard';
+      const url = this.title === 'Agents' || 'Administrateurs' ? 'profile' : 'dashboard';
       const param = this.title === 'Agents' 
-        ? { role: 'AGENT', profile_id: id }
-        : { agence_id: id, service_id: id2 };
+        ? { role:this.role,role1: 'AGENT', profile_id: id }
+        :this.title === 'Administrateurs' 
+        ? { role:this.role,role1: 'ADMINISTRATION', profile_id: id } :{ agence_id: id, service_id: id2 };
 
       try {
         await this.$router.push({ name: url, params: param });
@@ -165,11 +167,7 @@ export default {
             if (cachedAgences) {
               this.items = JSON.parse(cachedAgences);
             } else {
-              const response = await axios.get('/agencies', {
-                headers: {
-                  'Authorization': `Bearer ${localStorage.getItem('token')}`
-                }
-              });
+              const response = await axios.get('/agencies');
               this.items = response.data;
               localStorage.setItem('Agences', JSON.stringify(response.data));
               this.initializeShowOptions();
@@ -184,14 +182,22 @@ export default {
             if(this.title==='Agents'){
               this.items = data.filter(item=>item.role==='AGENT');  
             }
+
+            else if(this.title==='Administrateurs'){
+              this.items = data.filter(item=>item.role==='ADMINISTRATION');  
+            }
+
+            else if(this.title==='Services' && this.role1==='AGENT'){
+              this.items = data.filter(item=>item.user_id===this.user_id);  
+            }
             else this.items = data;
+            
             this.initializeShowOptions();
           }
         }
       } catch (error) {
         console.error('Failed to fetch items:', error);
       } finally {
-        this.loading = false;
         if(req){
           this.currentPage = 1;
         }
@@ -235,17 +241,18 @@ export default {
       }
     },
     async deleteItem(id, nom) {
-      if (confirm(`Type OK to delete item ${nom}?`)) {
-        try {
-          await axios.delete(`${this.fetchUrl}/${id}`);
-          console.log("Item deleted");
-          await this.getItems();
-          this.$emit('deleteItem');
-        } catch (error) {
-          console.error("Failed to delete item:", error);
-        }
-      }
-    },
+  if (confirm(`Tapez OK pour supprimer l'élément ${nom} ?`)) {
+    try {
+      await axios.delete(`${this.fetchUrl}/${id}`);
+      console.log("Élément supprimé");
+      await this.getItems();
+      this.$emit('deleteItem');
+    } catch (error) {
+      console.error("Échec de la suppression de l'élément :", error);
+    }
+  }
+},
+
     nextPage() {
       if (this.currentPage < this.totalPages) {
         this.currentPage++;

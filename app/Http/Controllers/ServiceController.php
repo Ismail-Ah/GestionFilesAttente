@@ -68,19 +68,54 @@ class ServiceController extends Controller
         return response()->json($services);
     }
 
+    public function getServices1() {
+        $user = auth()->user();
+    
+        if ($user->role === 'AGENT') {
+            // Obtenez les services associés à l'utilisateur avec les relations nécessaires
+            $services = $user->services()->with('agence', 'agent')->get();
+        } else {
+            // Obtenez tous les services avec les relations nécessaires
+            $services = Service::query()->with('agence', 'agent')->get();
+        }
+    
+        return response()->json($services);
+    }
+    
     public function getServices2(Agence $agence)
     {
+        // Si l'utilisateur n'est pas authentifié, on retourne les services de l'agence.
         if (!auth()->check()) {
             return response()->json($agence->services);
         }
-
+    
         $user = auth()->user();
-        if ($user->role === 'AGENT' && $user->agence->id != $agence->id) {
-            return response()->json(null); // or appropriate response indicating restricted access
+    
+        // Si l'utilisateur est un AGENT, on vérifie s'il appartient à l'agence demandée.
+        if ($user->role === 'AGENT') {
+            $services = $user->services;
+    
+            // Vérification si le premier service de l'utilisateur appartient à l'agence spécifiée.
+            if ($services->isNotEmpty() && $services->first()->agence_id === $agence->id) {
+                return response()->json($services);
+            } else {
+                // Retourne une réponse avec un code 403 (Accès refusé) si l'agence ne correspond pas.
+                return response()->json(['message' => 'Accès refusé'], 403);
+            }
         }
-
+    
+        // Si l'utilisateur n'est pas un AGENT ou l'agence correspond, on retourne les services de l'agence.
         return response()->json($agence->services);
     }
+
+    public function getServices3(Agence $agence)
+    {
+        
+    
+        // Si l'utilisateur n'est pas un AGENT ou l'agence correspond, on retourne les services de l'agence.
+        return response()->json($agence->services);
+    }
+    
 
     public function getServicesForQueue(Agence $agence)
     {

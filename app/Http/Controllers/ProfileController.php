@@ -12,13 +12,34 @@ use Illuminate\Support\Facades\Storage;
 
 class ProfileController extends Controller
 {
-    public function getNmbrServiceAgence(){
-        return response()->json(["nmbAgences"=>Agence::count(),"nmbServices"=>Service::count(),"nmbAgents"=>User::where('role','AGENT')->count()]);
+    public function getNmbrServiceAgence($user) {
+        if($user===0 || $user==='0'){
+            $user = auth()->user();
+        }
+        else $user = User::find($user);
+        if ($user->role === 'AGENT') {
+            // Retourne uniquement le nombre de services pour l'agent connecté
+            $nmbServices = $user->services()->count();
+            return response()->json(["nmbServices" => $nmbServices]);
+        } else {
+            // Retourne le nombre total d'agences, services et agents
+            return response()->json([
+                "nmbAgences" => Agence::count(),
+                "nmbServices" => Service::count(),
+                "nmbAgents" => User::where('role', 'AGENT')->count(),
+                "nmbAdministrateurs" => User::where('role', 'ADMINISTRATION')->count(),
+            ]);
+        }
     }
+    
     public function user(){
         $user=auth()->user();
         return response()->json($user);
     }
+
+
+    public function showFormUpdateProfileImage(){
+        return view('updateImageProfile', ['role' => auth()->user()->role]);    }
     public function user2(User $user){
         return response()->json($user);
     }

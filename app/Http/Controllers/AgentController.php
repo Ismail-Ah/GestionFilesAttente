@@ -105,6 +105,7 @@ class AgentController extends Controller
         return response()->json($agents);
     }
 
+
     public function getAgents2()
     {
     $agents = User::where('role', 'AGENT')->get();

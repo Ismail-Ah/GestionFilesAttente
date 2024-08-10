@@ -49,7 +49,7 @@
     name: 'TopServices',
     props:{
       name:String,
-      name_id:String,
+      name_id:[Number,String],
     },
     data() {
       return {

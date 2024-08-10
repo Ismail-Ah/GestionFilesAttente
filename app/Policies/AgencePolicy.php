@@ -29,7 +29,7 @@ class AgencePolicy
      */
     public function create(User $user): bool
     {
-        return $user->role==='ADMINISTRATION' || $user->role==='ADMIN';
+        return $user->role==='ADMINISTRATION';
     }
 
     /**
@@ -37,7 +37,7 @@ class AgencePolicy
      */
     public function update(User $user, Agence $agence): bool
     {
-        return $user->role==='ADMINISTRATION' || $user->role==='ADMIN';
+        return $user->role==='ADMINISTRATION' ;
     }
 
     /**
@@ -45,7 +45,7 @@ class AgencePolicy
      */
     public function delete(User $user, Agence $agence): bool
     {
-        return $user->role==='ADMINISTRATION' || $user->role==='ADMIN';
+        return $user->role==='ADMINISTRATION' ;
     }
 
     /**
@@ -61,6 +61,6 @@ class AgencePolicy
      */
     public function forceDelete(User $user, Agence $agence): bool
     {
-        return $user->role==='ADMINISTRATION' || $user->role==='ADMIN';
+        return $user->role==='ADMINISTRATION' ;
     }
 }

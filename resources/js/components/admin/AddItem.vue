@@ -113,10 +113,12 @@ export default {
 
         if (match) {
           localStorage.removeItem(`Agence${match[1]}Services`);
+          localStorage.removeItem(`Agence${match[1]}ServicesAgent`);
         }
       }
       else{
         localStorage.removeItem(`Agences`);
+        localStorage.removeItem(`Agences1`);
         localStorage.removeItem(`agences`);
 
 
@@ -152,9 +154,13 @@ export default {
           console.log("L'élément a été supprimé");
           if(this.name==='Service'){
             localStorage.removeItem(`Agence${id}Services`);
+            localStorage.removeItem(`Agence${id}ServicesAgent`);
           }
           else{
             localStorage.removeItem(`agences`);
+            localStorage.removeItem(`Agences`);
+            localStorage.removeItem(`Agences1`);
+
           }
           this.$router.go(-1);
         }).catch(error => {

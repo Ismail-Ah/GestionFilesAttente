@@ -5,6 +5,7 @@
     :headers="['Nom', 'Adresse', 'Email', 'Téléphone', 'Date de création']"
     :fields="['nom', 'adress', 'email', 'telephone']"
     :data1="agences"
+    :canEdit="role!='ADMIN'"
   />
 </template>
 
@@ -17,6 +18,7 @@ export default {
     ReusableList,
   },
   props:{
+    role:String,
     agences:Object,
   }
 };

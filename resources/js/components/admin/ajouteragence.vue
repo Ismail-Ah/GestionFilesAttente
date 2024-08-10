@@ -50,6 +50,8 @@ export default {
     localStorage.removeItem(`agences`);
     localStorage.removeItem(`Agences`);
 
+    localStorage.removeItem(`Agences1`);
+
   }
 };
 </script>

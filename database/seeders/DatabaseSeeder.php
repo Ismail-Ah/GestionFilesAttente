@@ -18,7 +18,7 @@ class DatabaseSeeder extends Seeder
         
 
         // Seed files_attentes
-        $serviceIds = [9, 10, 11, 12, 13, 14, 15, 17];
+        $serviceIds = [8];
 
         foreach ($serviceIds as $serviceId) {
             for ($i = 0; $i < 30; $i++) {

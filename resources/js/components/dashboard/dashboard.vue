@@ -9,11 +9,14 @@
          <div class="row">
            <div class="col-sm-6 choix">
              <div class="form-group">
-               <label>Sélectionner Agence</label>
+               <label>{{role!='AGENT'?'Sélectionner Agence':'Votre Agence'}}</label>
                <div class="position-relative d-flex align-items-center">
                  <select class="form-control" v-model="selectedAgence" @change="fetchServices">
-                   <option value="">Agence</option>
-                   <option v-for="agence in agencies" :key="agence.id" :value="agence.id">Ag{{agence.id}} | {{ agence.nom }} - {{ agence.adress }}</option>
+                   <option  :value="role==='AGENT'?selectedAgence:''">{{ default_agence }}</option>
+                   <template v-if="role!='AGENT'">
+                    <option  v-for="agence in agencies"  :key="agence.id" :value="agence.id" >Ag{{agence.id}} | {{ agence.nom }} - {{ agence.adress }}</option>
+
+                   </template>
                  </select>
                  <div v-if="role != 'AGENT'" class="btn-group btn-group-sm ml-1 add-agence-indicator">
                    <button type="button" class="btn btn-info" @click="$router.push('ajouter-agence')">
@@ -88,24 +91,29 @@ export default {
       services: [],
       loading: true,
       loading1:true,
+      default_agence:'Agence',
     };
   },
   methods: {
     fetchAgencies() {
-      const cachedAgences = localStorage.getItem('Agences');
+      const cachedAgences = localStorage.getItem('Agences1');
       if (cachedAgences) {
         this.agencies = JSON.parse(cachedAgences);
+        if(this.role==='AGENT' && this.agencies.length!=0){
+          this.selectedAgence=this.agencies[0].id;
+          this.default_agence = `Ag${this.agencies[0].id} | ${this.agencies[0].nom} - ${this.agencies[0].adress}`;
+        }
         this.initializeSelections();
         this.loading = false;
       } else {
-      axios.get('/agencies', {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      })
+      axios.get('/agencies1')
         .then(response => {
           this.agencies = response.data;
-          localStorage.setItem('Agences', JSON.stringify(response.data));
+          if(this.role==='AGENT' && this.agencies.length!=0){
+            this.selectedAgence=this.agencies[0].id;
+            this.default_agence = `Ag${this.agencies[0].id} | ${this.agencies[0].nom} - ${this.agencies[0].adress}`;
+          }
+          localStorage.setItem('Agences1', JSON.stringify(response.data));
           this.initializeSelections();
           this.loading = false;
         })
@@ -117,14 +125,14 @@ export default {
       async fetchServices() {
   if (this.selectedAgence) {
     try {
-      const cachedServices = localStorage.getItem(`Agence${this.selectedAgence}Services`);
+      const cachedServices = localStorage.getItem(`Agence${this.selectedAgence}ServicesAgent`);
       if (cachedServices) {
         this.services = JSON.parse(cachedServices);
         this.selectedService = this.service_id || '';
       } else {
         const response = await axios.get(`/agence/${this.selectedAgence}/services`);
         this.services = response.data;
-        localStorage.setItem(`Agence${this.selectedAgence}Services`, JSON.stringify(this.services));
+        localStorage.setItem(`Agence${this.selectedAgence}ServicesAgent`, JSON.stringify(this.services));
         this.selectedService = this.service_id || '';
       }
     } catch (error) {

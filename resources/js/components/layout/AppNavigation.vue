@@ -35,7 +35,7 @@
         </a>
         <ul class="nav " v-show="showCharts">
           <!-- Agences -->
-          <li class="nav-item">
+          <li v-if="role==='ADMINISTRATION'" class="nav-item">
             <a @click="toggleAgence" :class="{'nav-link': true, 'active': activeItem === 'Agences'}">
               <i class="fas fa-building nav-icon"></i>
               <p>
@@ -58,7 +58,7 @@
               </li>
             </ul>
           </li>
-          <li class="nav-item">
+          <li v-if="role==='ADMINISTRATION'" class="nav-item">
             <a @click="toggleService" :class="{'nav-link': true, 'active': activeItem === 'Services'}">
               <i class="fas fa-cogs nav-icon"></i>
               <p>

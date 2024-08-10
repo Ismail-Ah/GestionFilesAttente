@@ -8,6 +8,7 @@
 <?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
 <?php endif; ?>
 <?php $component->withAttributes([]); ?>
+   
     <router-view></router-view>
  <?php echo $__env->renderComponent(); ?>
 <?php endif; ?>

@@ -118,9 +118,9 @@
                         <!-- Tab 1: Gestion des Files -->
                         <div class="tab-pane fade show active" id="tab-1" role="tabpanel" aria-labelledby="tab-1">
                             <div class="row">
-                                <div class="col-lg-6">
-                                    <div class="image-container">
-                                        <img class="img-fluid" src="img/gestion-files.png" alt="Gestion des Files d'Attente">
+                                <div class="col-lg-6" >
+                                    <div class="image-container" >
+                                        <img class="img-fluid"  src="img/dashboard2.png" alt="Gestion des Files d'Attente">
                                     </div> <!-- end of image-container -->
                                 </div> <!-- end of col -->
                                 <div class="col-lg-6">
@@ -153,7 +153,7 @@
                             <div class="row">
                                 <div class="col-lg-6">
                                     <div class="image-container">
-                                        <img class="img-fluid" src="img/statistiques.png" alt="Statistiques en Temps Réel">
+                                        <img class="img-fluid" src="img/stat_agent.png" alt="Statistiques en Temps Réel">
                                     </div> <!-- end of image-container -->
                                 </div> <!-- end of col -->
                                 <div class="col-lg-6">
@@ -187,7 +187,7 @@
                             <div class="row">
                                 <div class="col-lg-6">
                                     <div class="image-container">
-                                        <img class="img-fluid" src="img/services-agences.png" alt="Gestion des Services et Agences">
+                                        <img class="img-fluid" src="img/ajouter_service.png" alt="Gestion des Services et Agences">
                                     </div> <!-- end of image-container -->
                                 </div> <!-- end of col -->
                                 <div class="col-lg-6">

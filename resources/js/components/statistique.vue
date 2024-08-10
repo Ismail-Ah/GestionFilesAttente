@@ -1,6 +1,6 @@
 <template>
   <div class="statistics">
-    <div v-if="loading" style="margin-top: -100%">
+    <div v-if="loading" style="margin-top: -50%">
       <LoadingSpinner /> <!-- Display spinner when loading -->
     </div>
     <div class="stats" v-else>

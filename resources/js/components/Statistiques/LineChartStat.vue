@@ -162,6 +162,13 @@ export default {
     name_id: [Number, String],
     timeFilter: Number,
   },
+  computed: {
+    combinedParams() {
+      // Combine all parameters that affect fetching data
+      return `${this.name}-${this.name_id}-${this.timeFilter}`;
+    }
+  },
+
   methods: {
     toggleShowList(n) {
       if(n==1){this.ShowList1 = !this.ShowList1;}
@@ -170,90 +177,116 @@ export default {
       else  this.ShowList4 = !this.ShowList4;
     },
     async getStatistiques() {
-      try {
-        let response;
-        if (this.name === "service") {
-          response = await axios.get(`/service/${parseInt(this.name_id)}/LineChartStat/${this.timeFilter}`);
-        } else if (this.name === "agencies") {
-          response = await axios.get(`/LineChartStatAgences/${this.timeFilter}`);
-        } else {
-          response = await axios.get(`/agence/${parseInt(this.name_id)}/LineChartStat/${this.timeFilter}`);
-        }
-        this.dataset = response.data;
-        this.drawChart();
-      } catch (error) {
-        console.error('Error fetching statistics:', error);
-      }
-    },
-    drawChart() {
-      if (this.myChart) this.myChart.destroy();
-      if (this.myChart2) this.myChart2.destroy();
-      if (this.myChart3) this.myChart3.destroy();
-      if (this.myChart4) this.myChart4.destroy();
+  try {
+    let response;
+    if (this.name === "service") {
+      response = await axios.get(`/service/${parseInt(this.name_id)}/LineChartStat/${this.timeFilter}`);
+      console.log("service data = ",response.data);
+    } else if (this.name === "agencies") {
+      response = await axios.get(`/LineChartStatAgences/${this.timeFilter}`);
+      console.log("agencies data = ",response.data);
+    } else {
+      response = await axios.get(`/agence/${parseInt(this.name_id)}/LineChartStat/${this.timeFilter}`);
+      console.log("agence data = ",response.data);
+    }
+    this.dataset = response.data;
+    
+    // Ensure canvas elements are ready before drawing charts
+    this.$nextTick(() => {
 
-      const xValues = this.generateXValues();
-      
-      this.myChart = new Chart("myChart", {
-        type: "line",
-        data: {
-          labels: xValues,
-          datasets: [{
-            data: this.dataset[2],
-            borderColor: "blue",
-            fill: false,
-            label: 'Total Clients',
-          }]
-        },
-        options: this.getChartOptions('Total Clients')
-      });
+      if(this.dataset) this.drawChart();
+    });
+  } catch (error) {
+    console.error('Error fetching statistics:', error);
+  }
+},
+drawChart() {
+  // Destroy any existing chart instances
+  if (this.myChart) this.myChart.destroy();
+  if (this.myChart2) this.myChart2.destroy();
+  if (this.myChart3) this.myChart3.destroy();
+  if (this.myChart4) this.myChart4.destroy();
 
-      this.myChart2 = new Chart("myChart2", {
-        type: "line",
-        data: {
-          labels: xValues,
-          datasets: [{
-            data: this.dataset[0],
-            borderColor: "green",
-            fill: false,
-            label: 'Clients Servis',
-          }, {
-            data: this.dataset[1],
-            borderColor: "red",
-            fill: false,
-            label: 'Clients Non Servis',
-          }]
-        },
-        options: this.getChartOptions('Clients Servis et Non Servis')
-      });
+  // Ensure dataset structure is correct before creating charts
+  if (!Array.isArray(this.dataset[2]) || !Array.isArray(this.dataset[0]) || !Array.isArray(this.dataset[1]) || !Array.isArray(this.dataset[3])) {
+    console.error("Dataset structure is incorrect", this.dataset);
+    return;
+  }
 
-      this.myChart3 = new Chart("myChart3", {
-        type: "line",
-        data: {
-          labels: xValues,
-          datasets: [{
-            data: this.dataset[3],
-            borderColor: "orange",
-            fill: false,
-            label: "Temps Moyen d'attente",
-          }]
-        },
-        options: this.getChartOptions("Temps Moyen d'attente en h")
-      });
+  const xValues = this.generateXValues();
 
-      this.myChart4 = new Chart("myChart4", {
-        type: "line",
-        data: {
-          labels: xValues,
-          datasets: [{
-            data: this.dataset[4],
-            borderColor: "green",
-            fill: false,
-            label: 'Taux de clients servis',
-          }]
-        },
-        options: this.getChartOptions('Taux de clients servis en %')
-      });
-    },
+  try {
+    const ctx1 = document.getElementById('myChart');
+    const ctx2 = document.getElementById('myChart2');
+    const ctx3 = document.getElementById('myChart3');
+    const ctx4 = document.getElementById('myChart4');
+
+    this.myChart = new Chart(ctx1, {
+      type: "line",
+      data: {
+        labels: xValues,
+        datasets: [{
+          data: this.dataset[2],
+          borderColor: "blue",
+          fill: false,
+          label: 'Total Clients',
+        }]
+      },
+      options: this.getChartOptions('Total Clients')
+    });
+
+    this.myChart2 = new Chart(ctx2, {
+      type: "line",
+      data: {
+        labels: xValues,
+        datasets: [{
+          data: this.dataset[0],
+          borderColor: "green",
+          fill: false,
+          label: 'Clients Servis',
+        }, {
+          data: this.dataset[1],
+          borderColor: "red",
+          fill: false,
+          label: 'Clients Non Servis',
+        }]
+      },
+      options: this.getChartOptions('Clients Servis et Non Servis')
+    });
+
+    this.myChart3 = new Chart(ctx3, {
+      type: "line",
+      data: {
+        labels: xValues,
+        datasets: [{
+          data: this.dataset[3],
+          borderColor: "orange",
+          fill: false,
+          label: "Temps Moyen d'attente",
+        }]
+      },
+      options: this.getChartOptions("Temps Moyen d'attente en h")
+    });
+
+    this.myChart4 = new Chart(ctx4, {
+      type: "line",
+      data: {
+        labels: xValues,
+        datasets: [{
+          data: this.dataset[4],
+          borderColor: "green",
+          fill: false,
+          label: 'Taux de clients servis',
+        }]
+      },
+      options: this.getChartOptions('Taux de clients servis en %')
+    });
+  } catch (error) {
+    console.error("Error while drawing charts:", error);
+  }
+},
+
+
     generateXValues() {
       let xValues = [];
       const today = new Date();
@@ -304,15 +337,13 @@ export default {
   },
   mounted() {
     this.getStatistiques();
-    this.updateInterval = setInterval(this.getStatistiques, 20000);
+    this.updateInterval = setInterval(this.getStatistiques,20000);
   },
   beforeDestroy() {
     clearInterval(this.updateInterval);
   },
   watch: {
-    name: 'getStatistiques',
-    name_id: 'getStatistiques',
-    timeFilter: 'getStatistiques',
+    combinedParams: 'getStatistiques',
   },
 };
 </script>

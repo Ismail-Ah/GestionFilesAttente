@@ -18,6 +18,7 @@ Route::middleware(['auth', 'can:create,App\Models\Agence'])->group(function () {
 Route::get('/agencies', [AgenceController::class, 'getAgences']);
 Route::middleware(['auth', 'can:viewAny,App\Models\Agence'])->group(function () {
     Route::get('/agences', [AgenceController::class, 'getAgences']);
+    Route::get('/agencies1', [AgenceController::class, 'getAgences1']);
 });
 
 
@@ -38,9 +39,11 @@ Route::middleware(['auth', 'can:create,App\Models\Service'])->group(function () 
     Route::get('/editer-service', [ServiceController::class, 'showFormEditerService']);
     Route::get('/agence/{agence}/editer-service', [ServiceController::class, 'showFormEditerService']);
 });
+Route::get('/agence/{agence}/services2', [ServiceController::class, 'getServices3']);
+
 Route::get('/agence/{agence}/services', [ServiceController::class, 'getServices2']);
+
 Route::middleware(['auth', 'can:view,service'])->group(function () {
-    
     Route::get('/edit-agent/services', [ServiceController::class, 'getServices2']);
 });
 Route::get('/service/{service}', [ServiceController::class, 'serviceInfo']);
@@ -48,6 +51,9 @@ Route::middleware(['auth', 'can:viewAny,App\Models\Service'])->group(function ()
     Route::get('/services', [ServiceController::class, 'getServices']);
     Route::get('/services/{user}', [ServiceController::class, 'getServicesOfAgent']);
 });
+
+Route::get('/services1', [ServiceController::class, 'getServices1']);
+
 Route::middleware(['auth', 'can:delete,service'])->group(function () {
     Route::delete('/services/{service}', [ServiceController::class, 'deleteService']);
 });
@@ -85,15 +91,15 @@ Route::get('/TopServices/{type}', [StatistiqueController::class, 'getTopServices
 Route::get('/TopServices/{agence}/{type}', [StatistiqueController::class, 'getAgenceTopServices']);
 
 // Routes for agents
-Route::middleware(['auth', 'can:create,App\Models\Agent'])->group(function () {
+Route::middleware(['auth', 'can:create,App\Models\User'])->group(function () {
     Route::post('/create-agent-acount', [AgentController::class, 'createAcount']);
     Route::get('/ajouter-agent', [AgentController::class, 'showFormAjouterAgent']);
     Route::get('/editer-agent', [AgentController::class, 'showFormEditerAgent']);
 });
-Route::middleware(['auth', 'can:view,App\Models\Agent'])->group(function () {
+Route::middleware(['auth', 'can:view,App\Models\User'])->group(function () {
     Route::get('/agent/services', [AgentController::class, 'getServices']);
 });
-Route::middleware(['auth', 'can:viewAny,App\Models\Agent'])->group(function () {
+Route::middleware(['auth', 'can:viewAny,App\Models\User'])->group(function () {
     Route::get('/agents', [AgentController::class, 'getAgents']);
     Route::get('/agence/{agence}/agents', [AgentController::class, 'getAgenceAgents']);
     Route::get('/edit/agents', [AgentController::class, 'getAgents']);
@@ -104,16 +110,18 @@ Route::middleware(['auth', 'can:delete,agent'])->group(function () {
 Route::middleware(['auth', 'can:update,user'])->group(function () {
     Route::post('/agents/{user}/update', [AgentController::class, 'updateAgent']);
 });
-Route::middleware(['auth', 'can:view,App\Models\Agent'])->group(function () {
+Route::middleware(['auth', 'can:view,App\Models\User'])->group(function () {
     Route::get('/service/{service}/agents', [AgentController::class, 'getServiceAgents']);
 });
 
 // Routes for profile
-Route::get('/profile/dataAgenceService', [ProfileController::class, 'getNmbrServiceAgence']);
+Route::get('/profile/{user}/dataAgenceService', [ProfileController::class, 'getNmbrServiceAgence'])->middleware('auth','can:viewAny,App\Models\User');
 Route::middleware('auth')->group(function () {
     Route::get('/profile/user', [ProfileController::class, 'user']);
     Route::get('/profile/{user}', [ProfileController::class, 'user2'])->middleware('can:view,user');
     Route::post('/user/{user}/update-profile-image', [ProfileController::class, 'updateProfileImage'])->middleware('can:update,user');
+    Route::get('/user/{user}/update-image-profile', [ProfileController::class, 'showFormUpdateProfileImage']);
+
 });
 Route::get('/logo', [ProfileController::class, 'getLogo']);
 Route::get('/nom', [ProfileController::class, 'getNom']);
