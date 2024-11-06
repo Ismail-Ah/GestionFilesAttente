@@ -1,5 +1,5 @@
 # Application de Gestion des Files d'Attente
-
+![Homepage](images/home1.PNG)
 Ce projet a été réalisé dans le cadre de mon stage de première année en Génie Logiciel à l'ENSIAS. Développée chez REDAL, cette application web vise à optimiser la gestion des files d'attente, permettant aux clients de prendre des tickets et de suivre leur position dans la file en temps réel.
 
 ## 📋 Table des matières
@@ -57,19 +57,19 @@ Lancez l'application dans votre navigateur en accédant à l'URL indiquée par l
 
 ### Exemples d'utilisation :
 - **Prendre un ticket** : Les clients peuvent prendre un ticket en ligne et consulter leur position dans la file.  
-  ![Ticket](images/Ticket.png)
+  ![Ticket](images/Ticket.PNG)
 
 - **Suivre l'état de la file d'attente** : Les clients peuvent accéder en temps réel aux informations sur l'état des files d'attente associées aux services.
-  ![File d'Attente](images/FileAttente.png)
+  ![File d'Attente](images/FileAttente.PNG)
 
 - **Gérer la file d'attente** : Les agents peuvent consulter et valider les tickets.  
-  ![Dashboard](images/dashboard.png)
+  ![Dashboard](images/dashboard.PNG)
 
 - **Accès aux paramètres** : Les administrateurs peuvent gérer les agences les services et les utilisateurs.  
-  ![Ajouter Service](images/ajouter_service.png)
+  ![Ajouter Service](images/ajouter_service.PNG)
 
 - **Accéder aux statistiques** : Les administrateurs ont accès aux statistiques de gestion pour optimiser les services.  
-  ![Statistiques](images/stat2.png)
+  ![Statistiques](images/stat2.PNG)
 
 ## 🎨 Aperçu de l'Application
 [Voir la vidéo de démonstration](https://drive.google.com/file/d/1JLJxI_xRk1PrD-AyqPo-aTuB893bssUW/view?usp=drive_link)
