@@ -33,7 +33,7 @@ L'application de gestion des files d'attente permet une organisation fluide des 
 
 1. Clonez ce dépôt :
     ```bash
-    git clone https://github.com/Ismail-Ah/project.git
+    git clone https://github.com/Ismail-Ah/GestionFilesAttente.git
     ```
 2. Installez les dépendances pour le backend et le frontend :
     ```bash
